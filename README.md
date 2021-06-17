@@ -10,6 +10,14 @@ npm install -g yo
 npm install -g generator-electron-flask
 ```
 
+or from GitHub
+
+```bash
+$ git clone https://github.com/abulka/generator-electron-flask
+$ cd generator-electron-flask
+$ npm link
+```
+
 Then generate your new project:
 
 ```bash
@@ -34,3 +42,21 @@ Apache-2.0 © [Andy Bulka]()
 [travis-url]: https://travis-ci.com/abulka/generator-electron-flask
 [daviddm-image]: https://david-dm.org/abulka/generator-electron-flask.svg?theme=shields.io
 [daviddm-url]: https://david-dm.org/abulka/generator-electron-flask
+
+# TODO
+
+Dot files are touch, but .gitignore is especially tough, and I've used this syntax to get over this issue:
+
+```js
+this.fs.copyTpl(
+      `${this.templatePath()}/**/.!(gitignore)*`,
+      this.destinationRoot(),
+      this.props
+    );
+
+    this.fs.copyTpl(
+      this.templatePath('.gitignorefile'),
+      this.destinationPath(`.gitignore`),
+      this.props
+    );
+```
