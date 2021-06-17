@@ -32,55 +32,86 @@ module.exports = class extends Generator {
     );
 
     const prompts = [
-      {
-        type: "input",
-        name: "name",
-        message: "App Name",
-        default: "myapp"
-      },
-      {
-        type: "list",
-        name: "license",
-        message: this.options.licensePrompt,
-        default: this.options.defaultLicense,
-        when:
-          !this.options.license ||
-          licenses.find(x => x.value === this.options.license) === undefined,
-        choices: licenses
-      },
-      {
-        name: "description",
-        message: "Description",
-        default: "My Electron application description"
-        // when: !this.props.description
-      },
-      {
-        name: "authorName",
-        message: "Author's Name",
-        // when: !this.props.authorName,
-        default: this.user.git.name(),
-        store: true
-      },
-      {
-        name: "authorEmail",
-        message: "Author's Email",
-        // when: !this.props.authorEmail,
-        default: this.user.git.email(),
-        store: true
-      },
-      {
-        name: "keywords",
-        message: "Package keywords (comma to split)",
-        // when: !this.pkg.keywords,
-        filter(words) {
-          return words.split(/\s*,\s*/g);
-        }
-      },
+      // {
+      //   type: "input",
+      //   name: "name",
+      //   message: "App Name",
+      //   default: "myapp"
+      // },
+      // {
+      //   type: "list",
+      //   name: "license",
+      //   message: this.options.licensePrompt,
+      //   default: this.options.defaultLicense,
+      //   when:
+      //     !this.options.license ||
+      //     licenses.find(x => x.value === this.options.license) === undefined,
+      //   choices: licenses
+      // },
+      // {
+      //   name: "description",
+      //   message: "Description",
+      //   default: "My Electron application description"
+      //   // when: !this.props.description
+      // },
+      // {
+      //   name: "authorName",
+      //   message: "Author's Name",
+      //   // when: !this.props.authorName,
+      //   default: this.user.git.name(),
+      //   store: true
+      // },
+      // {
+      //   name: "authorEmail",
+      //   message: "Author's Email",
+      //   // when: !this.props.authorEmail,
+      //   default: this.user.git.email(),
+      //   store: true
+      // },
+      // {
+      //   name: "keywords",
+      //   message: "Package keywords (comma to split)",
+      //   // when: !this.pkg.keywords,
+      //   filter(words) {
+      //     return words.split(/\s*,\s*/g);
+      //   }
+      // },
       {
         type: "confirm",
-        name: "someAnswer",
-        message: "Would you like to enable this option?",
+        name: "launchFlask",
+        message: "Would you like to launch flask server on electron startup?",
         default: true
+      },
+      {
+        type: "checkbox",
+        name: "misc",
+        message: "Choose from misc options",
+        choices: [
+          { name: "Electron logging", value: "electronLog" },
+          {
+            name: "Kill flask server on electron exit",
+            value: "killFlask",
+            // disabled: !this.props.launchFlask
+          },
+          { value: "reportCwd" },
+          { value: "reportVersions" },
+          {
+            name: "Fully quit on Mac on exit (without needing CMD-Q)",
+            value: "macFullyQuit"
+          },
+          {
+            name: "Demo button on main page calling Flask endpoing",
+            value: "demoVueMain"
+          }
+        ],
+        default: [
+          "electronLog",
+          "killFlask",
+          "reportCwd",
+          "reportVersions",
+          "macFullyQuit",
+          "demoVueMain"
+        ]
       }
     ];
 
@@ -91,6 +122,15 @@ module.exports = class extends Generator {
   }
 
   writing() {
+    // hack in some value during devel
+    this.props.name = "myapp";
+    this.props.description = "";
+    this.props.authorName = "";
+    this.props.authorEmail = "";
+    this.props.license = "MIT";
+    this.props.keywords = "";
+
+    // Begin
     const src = this.sourceRoot();
     const dest = this.destinationPath(`${this.props.name}`);
 
@@ -107,14 +147,22 @@ module.exports = class extends Generator {
     this.fs.copy(src, dest, copyOpts);
 
     // Add template substitution
-    const files = ["package.json"];
+    const files = ["package.json", "src/index.js", "src/index.html"];
     const context = {
       name: this.props.name,
       description: this.props.description,
       authorName: this.props.authorName,
       authorEmail: this.props.authorEmail,
       license: this.props.license,
-      keywords: this.props.keywords
+      keywords: this.props.keywords,
+      // misc: this.props.misc,
+      launchFlask: this.props.launchFlask,
+      killFlask: this.props.misc.includes("killFlask"),
+      electronLog: this.props.misc.includes("electronLog"),
+      reportVersions: this.props.misc.includes("reportVersions"),
+      reportCwd: this.props.misc.includes("reportCwd"),
+      demoVueMain: this.props.misc.includes("demoVueMain"),
+      macFullyQuit: this.props.misc.includes("macFullyQuit")
     };
     files.forEach(file => {
       this.fs.copyTpl(

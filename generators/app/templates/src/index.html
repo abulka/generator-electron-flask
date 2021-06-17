@@ -4,9 +4,67 @@
     <meta charset="UTF-8">
     <title>Hello World!</title>
     <link rel="stylesheet" href="index.css">
-  </head>
+
+    <% if (demoVueMain) { %>
+
+    <!-- You MUST include jQuery before Fomantic -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+
+    <!-- Fomantic -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.8.7/dist/semantic.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/fomantic-ui@2.8.7/dist/semantic.min.js"></script>
+
+    <!-- Vue -->
+    <script src="https://unpkg.com/vue@next"></script>
+
+    <% } %>
+
+  </head <% if (demoVueMain) { %>background="cyan"<% } %> >
   <body>
     <h1>💖 Hello World!</h1>
     <p>Welcome to your Electron application.</p>
+
+    <% if (demoVueMain) { %>
+    <div id="hello-vue" class="demo">
+      Message is: {{ message }}
+  
+      <div class="inline field">
+        <button class="ui button green" v-on:click="getInfo">
+          getInfo
+        </button>
+      </div>
+  
+      <ul>
+        <p>The following will take you to a flask rendered page!</p>
+        <li><a href="http://localhost:5000/hello">hello</a></li>
+      </ul>
+    </div>
+
+    <script>
+      const HelloVueApp = {
+        data() {
+          return {
+            message: 'Hello Vue!!'
+          }
+        },
+        methods: {
+          getInfo() {
+            $.ajax({
+              method: "GET",
+              url: `http://localhost:5000`,
+              data: {},
+              // contentType: "application/json",
+              success: response => {
+                this.message = response
+              }
+            });
+          }
+        },
+      }
+  
+      Vue.createApp(HelloVueApp).mount('#hello-vue')
+    </script>    
+    <% } %>
+    
   </body>
 </html>
