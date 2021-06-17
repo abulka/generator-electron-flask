@@ -15,6 +15,7 @@ or from GitHub
 ```bash
 $ git clone https://github.com/abulka/generator-electron-flask
 $ cd generator-electron-flask
+$ npm install
 $ npm link
 ```
 

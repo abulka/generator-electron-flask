@@ -32,50 +32,50 @@ module.exports = class extends Generator {
     );
 
     const prompts = [
-      // {
-      //   type: "input",
-      //   name: "name",
-      //   message: "App Name",
-      //   default: "myapp"
-      // },
-      // {
-      //   type: "list",
-      //   name: "license",
-      //   message: this.options.licensePrompt,
-      //   default: this.options.defaultLicense,
-      //   when:
-      //     !this.options.license ||
-      //     licenses.find(x => x.value === this.options.license) === undefined,
-      //   choices: licenses
-      // },
-      // {
-      //   name: "description",
-      //   message: "Description",
-      //   default: "My Electron application description"
-      //   // when: !this.props.description
-      // },
-      // {
-      //   name: "authorName",
-      //   message: "Author's Name",
-      //   // when: !this.props.authorName,
-      //   default: this.user.git.name(),
-      //   store: true
-      // },
-      // {
-      //   name: "authorEmail",
-      //   message: "Author's Email",
-      //   // when: !this.props.authorEmail,
-      //   default: this.user.git.email(),
-      //   store: true
-      // },
-      // {
-      //   name: "keywords",
-      //   message: "Package keywords (comma to split)",
-      //   // when: !this.pkg.keywords,
-      //   filter(words) {
-      //     return words.split(/\s*,\s*/g);
-      //   }
-      // },
+      {
+        type: "input",
+        name: "name",
+        message: "App Name",
+        default: "myapp"
+      },
+      {
+        type: "list",
+        name: "license",
+        message: this.options.licensePrompt,
+        default: this.options.defaultLicense,
+        when:
+          !this.options.license ||
+          licenses.find(x => x.value === this.options.license) === undefined,
+        choices: licenses
+      },
+      {
+        name: "description",
+        message: "Description",
+        default: "My Electron application description"
+        // when: !this.props.description
+      },
+      {
+        name: "authorName",
+        message: "Author's Name",
+        // when: !this.props.authorName,
+        default: this.user.git.name(),
+        store: true
+      },
+      {
+        name: "authorEmail",
+        message: "Author's Email",
+        // when: !this.props.authorEmail,
+        default: this.user.git.email(),
+        store: true
+      },
+      {
+        name: "keywords",
+        message: "Package keywords (comma to split)",
+        // when: !this.pkg.keywords,
+        filter(words) {
+          return words.split(/\s*,\s*/g);
+        }
+      },
       {
         type: "confirm",
         name: "launchFlask",
@@ -90,7 +90,7 @@ module.exports = class extends Generator {
           { name: "Electron logging", value: "electronLog" },
           {
             name: "Kill flask server on electron exit",
-            value: "killFlask",
+            value: "killFlask"
             // disabled: !this.props.launchFlask
           },
           { value: "reportCwd" },
@@ -123,12 +123,12 @@ module.exports = class extends Generator {
 
   writing() {
     // hack in some value during devel
-    this.props.name = "myapp";
-    this.props.description = "";
-    this.props.authorName = "";
-    this.props.authorEmail = "";
-    this.props.license = "MIT";
-    this.props.keywords = "";
+    // this.props.name = "myapp";
+    // this.props.description = "";
+    // this.props.authorName = "";
+    // this.props.authorEmail = "";
+    // this.props.license = "MIT";
+    // this.props.keywords = "";
 
     // Begin
     const src = this.sourceRoot();
@@ -175,8 +175,39 @@ module.exports = class extends Generator {
   }
 
   install() {
-    // this.installDependencies();
     const appDir = path.join(process.cwd(), this.props.name);
     process.chdir(appDir);
+
+    // venv
+    console.log("Creating python venv...");
+    this.spawnCommandSync("python", ["-m", "venv", "venv"]);
+
+    console.log("Upgrading pip...");
+    this.spawnCommandSync("venv/bin/python", [
+      "-m",
+      "pip",
+      "install",
+      "--upgrade",
+      "pip"
+    ]);
+
+    console.log("Installing python requirements...");
+    this.spawnCommandSync("venv/bin/python", [
+      "-m",
+      "pip",
+      "install",
+      "-r",
+      "requirements.txt"
+    ]);
+
+    // this.installDependencies();
+    // this.npmInstall();
+    console.log("Installing node modules...");
+    this.spawnCommandSync("npm", ["install"]);
+
+    console.log(`Now 'cd ${this.props.name}'`);
+    console.log(
+      `and run 'bin/run' to build the electron app and flask server app...`
+    );
   }
 };
