@@ -16,7 +16,7 @@
     "name": "<%= authorName %>",
     "email": "<%= authorEmail %>"
   },
-  "license": "MIT",
+  "license": "<%= license %>",
   "config": {
     "forge": {
       "packagerConfig": {},
