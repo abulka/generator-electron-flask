@@ -1,1 +1,2 @@
-out/myapp-darwin-x64/myapp.app/Contents/Resources/app/dist/app
+APPNAME=<%= name %>
+out/$APPNAME-darwin-x64/$APPNAME.app/Contents/Resources/app/dist/$APPNAME

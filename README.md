@@ -25,7 +25,7 @@ Then generate your new project:
 yo electron-flask
 ```
 
-## Scripts in `./bin`
+## Scripts in `./bin` (Mac)
 
 In order to use these handy scripts, please put `./bin` in your PATH to run these handy scripts e.g. edit your `~/.bashrc` and add:
 
@@ -49,7 +49,7 @@ runelectron| runs the electron based app in development mode using `npm start`. 
 runelectron-exe| runs the final electron based app
 runflask| Run flask in development mode using `python src-flask-server/app.py`
 runflask-exe| run the flask executable that was built by Pyinstaller.
-runflask-exe-inside-electron| run the flask executable which has been embedded inside the electron app
+runflask-exe-inside-electron| run the flask executable which has been embedded inside the electron app - use for debugging
 whos-on-port-5000| see who is running on port 5000 which is the default flask server port - handy just in case flask is still running and wasn't killed when the electron app exited. Kill it using `kill pid` using the process id listed.
 
 ## Typical workflow

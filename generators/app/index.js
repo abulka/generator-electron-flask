@@ -147,7 +147,13 @@ module.exports = class extends Generator {
     this.fs.copy(src, dest, copyOpts);
 
     // Add template substitution
-    const files = ["package.json", "src/index.js", "src/index.html"];
+    const files = [
+      "package.json",
+      "src/index.js",
+      "src/index.html",
+      "bin/runelectron-exe",
+      "bin/runflask-exe"
+    ];
     const context = {
       name: this.props.name,
       description: this.props.description,
@@ -155,7 +161,6 @@ module.exports = class extends Generator {
       authorEmail: this.props.authorEmail,
       license: this.props.license,
       keywords: this.props.keywords,
-      // misc: this.props.misc,
       launchFlask: this.props.launchFlask,
       killFlask: this.props.misc.includes("killFlask"),
       electronLog: this.props.misc.includes("electronLog"),

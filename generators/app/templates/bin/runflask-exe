@@ -1,1 +1,2 @@
-dist/app
+APPNAME=<%= name %>
+dist/$APPNAME
