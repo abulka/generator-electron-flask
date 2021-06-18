@@ -1,6 +1,6 @@
 {
   "name": "generator-electron-flask",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "electron app starter with flask subprocess incl. pyinstaller packaging ",
   "homepage": "",
   "author": {
