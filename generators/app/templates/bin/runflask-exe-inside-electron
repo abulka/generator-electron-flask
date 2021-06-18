@@ -1,2 +1,10 @@
 APPNAME=<%= name %>
-out/$APPNAME-darwin-x64/$APPNAME.app/Contents/Resources/app/dist/$APPNAME
+
+if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+        out/$APPNAME-linux-x64/resources/app/dist/app
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+        # Mac OSX
+        out/$APPNAME-darwin-x64/$APPNAME.app/Contents/Resources/app/dist/$APPNAME
+else
+        echo unknown OS
+fi

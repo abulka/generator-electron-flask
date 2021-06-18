@@ -151,8 +151,7 @@ module.exports = class extends Generator {
       "package.json",
       "src/index.js",
       "src/index.html",
-      "bin/runelectron-exe",
-      "bin/runflask-exe"
+      "bin/runelectron-exe"
     ];
     const context = {
       name: this.props.name,

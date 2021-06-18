@@ -3,6 +3,8 @@
 
 ## Installation
 
+> Before running this generator, ensure you have installed nodejs, npm and python. Read my Python and Nodejs [installation tips](doco/installation-tips.md).
+
 First, install [Yeoman](http://yeoman.io) and generator-electron-flask using [npm](https://www.npmjs.com/) (we assume you have pre-installed [node.js](https://nodejs.org/)).
 
 ```bash
@@ -25,7 +27,11 @@ Then generate your new project:
 yo electron-flask
 ```
 
-## Scripts in `./bin` (Mac)
+### To update this generator
+
+    npm update generator-electron-flask -g
+
+## Scripts in `./bin` (Mac, Linux)
 
 Because these scripts call each other, you must have `./bin` in your PATH.
 
@@ -71,6 +77,8 @@ For running the flask server in development and also in executable mode, as well
 
 For running the electron app in development mode, and launching the final electron executable from the command line. Of course you can also double click on the final electron executable to launch it too. 
 
+> On Linux double click on the final electron executable will probably fail - you will either have to launch the final electron executable via the command line using `bin/runelectron-exe` or build a desktop launcher file for this electron app. See my [desktop launcher notes](doco/desktop-launcher-tips.md). Alternatively you can also build a ubuntu snap by adding an entry to the generated `package.json` under the `"makers":` JSON key - for more information see https://www.electronforge.io/config/makers 
+
 **Script Name**|**Description**
 :-----:|:-----
 run| Does everything, installs dependencies, builds both the flask and electron executables, and runs the final electron based app. During development and testing, you probably want to use the more granular build and run scripts.
@@ -113,20 +121,3 @@ Apache-2.0 © [Andy Bulka]()
 [daviddm-image]: https://david-dm.org/abulka/generator-electron-flask.svg?theme=shields.io
 [daviddm-url]: https://david-dm.org/abulka/generator-electron-flask
 
-# TODO
-
-Dot files are tough, but .gitignore is especially tough, and I've used this syntax to get over this issue:
-
-```js
-this.fs.copyTpl(
-      `${this.templatePath()}/**/.!(gitignore)*`,
-      this.destinationRoot(),
-      this.props
-    );
-
-    this.fs.copyTpl(
-      this.templatePath('.gitignorefile'),
-      this.destinationPath(`.gitignore`),
-      this.props
-    );
-```
