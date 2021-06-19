@@ -1,3 +1,3 @@
-install-deps
-buildflask-exe
-buildelectron-exe
+call install-deps
+call buildflask-exe
+call buildelectron-exe

@@ -42,7 +42,7 @@ let resourcesPath = process.resourcesPath;
 // Pyinstaller.  Note in the path below, the first 'app' refers to the path
 // inside the Electron executable bundle, and the second 'app' is the name of
 // the Python executable file.
-let pythonExePath = path.join(process.resourcesPath, 'app/dist/app');
+let pythonExePath = path.join(process.resourcesPath, 'app', 'dist', process.platform === "win32" ? 'app.exe' : 'app');
 
 // Record the process id of the Python flask child process so that we can kill it later.
 let subpy;
