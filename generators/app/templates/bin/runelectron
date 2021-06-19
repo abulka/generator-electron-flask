@@ -1,1 +1,2 @@
+echo Ensure you have activated your virtual environment with venv/bin/activate 
 npm start

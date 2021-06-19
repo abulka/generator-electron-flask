@@ -1,4 +1,5 @@
 APPNAME=<%= name %>
+echo Ensure you have activated your virtual environment with venv\Scripts\activate 
 
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
         out/$APPNAME-linux-x64/$APPNAME
