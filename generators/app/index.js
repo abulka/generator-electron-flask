@@ -176,6 +176,15 @@ module.exports = class extends Generator {
         copyOpts
       );
     });
+    this._copyGitIgnore();
+  }
+
+  _copyGitIgnore() {
+    this.fs.copyTpl(
+      this.templatePath(".gitignorefile"),
+      this.destinationPath(`${this.props.name}/.gitignore`),
+      this.props
+    );
   }
 
   install() {
