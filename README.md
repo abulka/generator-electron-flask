@@ -51,6 +51,8 @@ then start a fresh shell.
 
 ### Windows 10
 
+Use Command Prompt terminal (not powershell) to run these scripts.
+
 Add `bin` to your 'Environment Variables / User variables for USER / Path' using the built in editor, which you can find by typing 'path' into the windows search bar and selecting 'Edit the system environment variables' menu item.
 
 > Ensure you close all running terminals and shells and open a fresh terminal. In 'Command Prompt' shell type `PATH` and ensure the relative path to bin has been added ok e.g. Notice the last entry below:
@@ -111,6 +113,11 @@ Misc scripts you might use during development.
 **Script Name**|**Description**
 :-----:|:-----
 whos-on-port-5000| See what processes are running on port 5000 which is the default flask server port - handy just in case flask is still running and wasn't killed when the electron app exited. Kill it using `kill pid` using the process id listed.
+
+For Windows 10
+
+    - command prompt: run `whos-on-port-5000` which should invoke `bin\whos-on-port-5000.bat`
+    - powershell: run `bin\whos-on-port-5000` which should invoke `bin\whos-on-port-5000.ps1`
 
 ## Typical workflow
 
