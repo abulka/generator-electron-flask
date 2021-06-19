@@ -179,6 +179,11 @@ module.exports = class extends Generator {
   }
 
   install() {
+    let venvPythonPath =
+      process.platform === "win32"
+        ? "venv\\scripts\\python.exe"
+        : "venv/bin/python";
+
     const appDir = path.join(process.cwd(), this.props.name);
     process.chdir(appDir);
 
@@ -187,7 +192,7 @@ module.exports = class extends Generator {
     this.spawnCommandSync("python", ["-m", "venv", "venv"]);
 
     console.log("Upgrading pip...");
-    this.spawnCommandSync("venv/bin/python", [
+    this.spawnCommandSync(venvPythonPath, [
       "-m",
       "pip",
       "install",
@@ -196,7 +201,7 @@ module.exports = class extends Generator {
     ]);
 
     console.log("Installing python requirements...");
-    this.spawnCommandSync("venv/bin/python", [
+    this.spawnCommandSync(venvPythonPath, [
       "-m",
       "pip",
       "install",
