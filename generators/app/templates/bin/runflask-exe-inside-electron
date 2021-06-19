@@ -4,7 +4,7 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
         out/$APPNAME-linux-x64/resources/app/dist/app
 elif [[ "$OSTYPE" == "darwin"* ]]; then
         # Mac OSX
-        out/$APPNAME-darwin-x64/$APPNAME.app/Contents/Resources/app/dist/$APPNAME
+        out/$APPNAME-darwin-x64/$APPNAME.app/Contents/Resources/app/dist/app
 else
         echo unknown OS
 fi
