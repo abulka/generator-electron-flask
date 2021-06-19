@@ -64,7 +64,7 @@ function runFlask() {
   if (guessPackaged())
     subpy = require('child_process').spawn(pythonExePath, [], options);  // prod
   else
-    subpy = require('child_process').spawn('python', [__dirname + '/app.py']);  // dev
+    subpy = require('child_process').spawn('python', [path.join(__dirname, '..', 'src-flask-server', 'app.py')]);  // dev
 
   subpy.stdout.on('data', function (data) {
     let msg = `PYTHON stdout: ${data.toString('utf8')}`
