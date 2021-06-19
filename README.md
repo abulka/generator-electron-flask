@@ -31,15 +31,31 @@ yo electron-flask
 
     npm update generator-electron-flask -g
 
-## Scripts in `./bin` (Mac, Linux)
+## Scripts in `./bin` inside your newly created project
 
-Because these scripts call each other, you must have `./bin` in your PATH.
+These are a collection of handy bash and .bat scripts for building and running both flask and electron, in your new project.
+
+> These scripts assume that a local Python exists in the `./venv` directory root of your generated project. This Yoeman generator would have created that for you.
+
+You will need to add `bin` to your PATH, after which, you can invoke any script residing in ./bin from the root of your newly created project, e.g. by typing `runflask`.  This will work for both Mac/Linux and Windows 10. In Windows 10 the `.bat` script will be found, not the bash script.
+
+Also, because some of these scripts call each other, you must have `./bin` in your PATH.
+
+### Mac, Linux
 
 Edit your `~/.bashrc` and add:
 
     export PATH="./bin:$PATH"
 
-> These scripts assume that a local Python exists in the `./venv` directory root of your generated project. This Yoeman generator would have created that for you.
+then start a fresh shell.
+
+### Windows 10
+
+Add `bin` to your 'Environment Variables / User variables for USER / Path' using the built in editor, which you can find by typing 'path' into the windows search bar and selecting 'Edit the system environment variables' menu item.
+
+> Ensure you close all running terminals and shells and open a fresh terminal. In 'Command Prompt' shell type `PATH` and ensure the relative path to bin has been added ok e.g. Notice the last entry below:
+
+    ...;bin;
 
 ### Meaning of 'exe'  
 

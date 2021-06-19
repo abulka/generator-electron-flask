@@ -1,2 +1,1 @@
-source venv/bin/activate
-python src-flask-server/app.py
+venv/bin/python src-flask-server/app.py
