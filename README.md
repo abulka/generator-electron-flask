@@ -95,7 +95,7 @@ For running the flask server in development and also in executable mode, as well
 
 For running the electron app in development mode, and launching the final electron executable from the command line. Of course you can also double click on the final electron executable to launch it too. 
 
-> On Linux double click on the final electron executable will probably fail - you will either have to launch the final electron executable via the command line using `bin/runelectron-exe` or build a desktop launcher file for this electron app. See my [desktop launcher notes](doco/desktop-launcher-tips.md). Alternatively you can also build a ubuntu snap by adding an entry to the generated `package.json` under the `"makers":` JSON key - for more information see https://www.electronforge.io/config/makers 
+> On Linux double click on the final electron executable will probably fail - see [linux notes](doco/building-apps-for-linux.md)
 
 **Script Name**|**Description**
 :-----:|:-----
@@ -135,7 +135,51 @@ The Flask executable is created by Pyinstaller. When the executable runs, the te
 
 ### File structure generated
 
-TODO
+
+root files
+
+    package.json        javascript electron project npm config and requirements
+    requirements.txt    flask Python project requirements
+    bin                 handy scripts
+
+source code dirs
+
+    src
+    ├── index.css
+    ├── index.html
+    └── index.js
+
+    src-flask-server/
+    ├── app.py
+    ├── static
+    │   ├── css
+    │   │   └── hello.css
+    │   ├── images
+    │   │   └── hello.png
+    │   └── js
+    │       └── hello.js
+    └── templates
+        └── hello.html
+
+build dirs
+
+    build
+    dist
+    out
+
+local js and python libraries and runtimes, to ignore
+
+    node_modules
+    venv
+
+### Tips
+
+`src-flask-server/static/js/hello.js` is meant to be used by flask template (if you say yes to the sample demo), used by template `src-flask-server/templates/hello.html` - not currently included.
+
+### Note on the use of vue.js in demo
+
+Note that vue is initialised to use `delimiters: ["${", "}"]` to distinguish from the flask templating `{{ }}`.
+
 
 ## License
 
