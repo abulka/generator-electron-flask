@@ -167,7 +167,7 @@ module.exports = class extends Generator {
       "src/index.js",
       "src/index.html",
       "src-flask-server/app.py",
-      "src-flask-server/static/js/hello.js",
+      "src-flask-server/static/js/hello-vue.js",
       "bin/whos-on-flask-port",
       "bin/whos-on-flask-port.bat",
       "bin/whos-on-flask-port.ps1",

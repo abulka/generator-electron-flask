@@ -49,6 +49,9 @@ class HelloWorld(Resource):
 def hello():
     return render_template('hello.html', msg="YOU")
 
+@app.route('/hello-vue')
+def hello_vue():
+    return render_template('hello-vue.html', msg="with a bit of vue.js thrown in")
 
 if __name__ == "__main__":
     # app.run()

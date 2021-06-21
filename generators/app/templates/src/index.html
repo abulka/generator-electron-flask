@@ -25,7 +25,7 @@
     <p>Welcome to your Electron application.</p>
 
     <% if (demoVueMain) { %>
-    <div id="hello-vue" class="demo">
+    <div id="electron-index-vue" class="demo">
       Message is: {{ message }}
   
       <div class="inline field">
@@ -35,13 +35,14 @@
       </div>
   
       <ul>
-        <p>The following will take you to a flask rendered page!</p>
+        <p>The following will take you to a flask rendered pages!</p>
         <li><a href="http://localhost:<%= portFlask %>/hello">hello</a></li>
+        <li><a href="http://localhost:<%= portFlask %>/hello-vue">hello-vue</a></li>
       </ul>
     </div>
 
     <script>
-      const HelloVueApp = {
+      const IndexVueApp = {
         data() {
           return {
             message: 'Hello Vue!!'
@@ -62,7 +63,7 @@
         },
       }
   
-      Vue.createApp(HelloVueApp).mount('#hello-vue')
+      Vue.createApp(IndexVueApp).mount('#electron-index-vue')
     </script>    
     <% } %>
     
