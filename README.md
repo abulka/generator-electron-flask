@@ -180,6 +180,19 @@ local js and python libraries and runtimes, to ignore
 
 Note that vue is initialised to use `delimiters: ["${", "}"]` to distinguish from the flask templating `{{ }}`.
 
+## Husky pre commit
+
+During the development of this project, checking in using git would trigger a pre commit hook that runs husky. For some reason husky would try to scan the templates folder and complain about invalid syntax - due to the yoeman <%> tags. Not sure why this template folder isn't being completely ignored?  
+
+Quick fix
+
+    mv .git/hooks/pre-commit .git/hooks/pre-commit-OFFLINE
+
+Temporary fix
+
+    git commit --no-verify
+
+More discussion: https://stackoverflow.com/questions/63943401/husky-pre-commit-hook-failed-add-no-verify-to-bypass
 
 ## License
 
