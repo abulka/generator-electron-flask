@@ -99,23 +99,32 @@ module.exports = class extends Generator {
             value: "killFlask"
             // disabled: !this.props.launchFlask
           },
-          { value: "reportCwd" },
-          { value: "reportVersions" },
+          {
+            name: "Print current working directory on startup",
+            value: "reportCwd"
+          },
+          {
+            name: "Print node and electron versions on starrtup",
+            value: "reportVersions"
+          },
           {
             name: "Fully quit on Mac on exit (without needing CMD-Q)",
             value: "macFullyQuit"
           },
           {
-            name: "Demo button on main page calling Flask endpoing",
+            name: "Open Electron/Chrome DevTools in final app",
+            value: "openDevTools"
+          },
+          {
+            name: "Demo button on main page calling Flask endpoint",
             value: "demoVueMain"
           }
         ],
         default: [
           "electronLog",
           "killFlask",
-          "reportCwd",
-          "reportVersions",
           "macFullyQuit",
+          "openDevTools",
           "demoVueMain"
         ]
       }
@@ -181,7 +190,8 @@ module.exports = class extends Generator {
       reportVersions: this.props.misc.includes("reportVersions"),
       reportCwd: this.props.misc.includes("reportCwd"),
       demoVueMain: this.props.misc.includes("demoVueMain"),
-      macFullyQuit: this.props.misc.includes("macFullyQuit")
+      macFullyQuit: this.props.misc.includes("macFullyQuit"),
+      openDevTools: this.props.misc.includes("openDevTools")
     };
     files.forEach(file => {
       this.fs.copyTpl(
