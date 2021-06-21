@@ -112,12 +112,12 @@ Misc scripts you might use during development.
 
 **Script Name**|**Description**
 :-----:|:-----
-whos-on-port-5000| See what processes are running on port 5000 which is the default flask server port - handy just in case flask is still running and wasn't killed when the electron app exited. Kill it using `kill pid` using the process id listed.
+whos-on-flask-port| See what processes are running on port 5000 (or whatever port number you chose in the yo generator wizard) which is the default flask server port - handy just in case flask is still running and wasn't killed when the electron app exited. Kill it using `kill pid` using the process id listed.
 
 For Windows 10
 
-    - command prompt: run `whos-on-port-5000` which should invoke `bin\whos-on-port-5000.bat`
-    - powershell: run `bin\whos-on-port-5000` which should invoke `bin\whos-on-port-5000.ps1`
+    - command prompt: run `whos-on-flask-port` which invokes `bin\whos-on-flask-port.bat`
+    - powershell: run `bin\whos-on-flask-port` which invokes `bin\whos-on-flask-port.ps1`
 
 ## Typical workflow
 
@@ -132,6 +132,10 @@ For deployment, simply run the script `build` and the resulting app will appear 
 Flask is spawned as a child process the the Electron app main process - see `src/index.js`.  For production, Flask is embedded inside the Electron app as an executable in its Resources directory.
 
 The Flask executable is created by Pyinstaller. When the executable runs, the tempates and static dirs, plus the python runtime are unzipped into a temporary directory, then run.
+
+### File structure generated
+
+TODO
 
 ## License
 

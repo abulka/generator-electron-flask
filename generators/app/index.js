@@ -83,6 +83,11 @@ module.exports = class extends Generator {
         default: true
       },
       {
+        name: "portFlask",
+        message: "Run flask on port number?",
+        default: 5000
+      },
+      {
         type: "checkbox",
         name: "misc",
         message: "Choose from misc options",
@@ -151,6 +156,10 @@ module.exports = class extends Generator {
       "package.json",
       "src/index.js",
       "src/index.html",
+      "src-flask-server/static/js/hello.js",
+      "bin/whos-on-flask-port",
+      "bin/whos-on-flask-port.bat",
+      "bin/whos-on-flask-port.ps1",
       "bin/runelectron-exe",
       "bin/runelectron-exe.bat",
       "bin/runflask-exe-inside-electron",
@@ -164,6 +173,7 @@ module.exports = class extends Generator {
       license: this.props.license,
       keywords: this.props.keywords,
       launchFlask: this.props.launchFlask,
+      portFlask: this.props.portFlask,
       killFlask: this.props.misc.includes("killFlask"),
       electronLog: this.props.misc.includes("electronLog"),
       reportVersions: this.props.misc.includes("reportVersions"),

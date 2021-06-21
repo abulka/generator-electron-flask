@@ -36,7 +36,7 @@
   
       <ul>
         <p>The following will take you to a flask rendered page!</p>
-        <li><a href="http://localhost:5000/hello">hello</a></li>
+        <li><a href="http://localhost:<%= portFlask %>/hello">hello</a></li>
       </ul>
     </div>
 
@@ -51,7 +51,7 @@
           getInfo() {
             $.ajax({
               method: "GET",
-              url: `http://localhost:5000`,
+              url: `http://localhost:<%= portFlask %>`,
               data: {},
               // contentType: "application/json",
               success: response => {
