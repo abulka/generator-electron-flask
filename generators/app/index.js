@@ -84,6 +84,7 @@ module.exports = class extends Generator {
       },
       {
         name: "portFlask",
+        type: "number",
         message: "Run flask on port number?",
         default: 5000
       },
@@ -156,6 +157,7 @@ module.exports = class extends Generator {
       "package.json",
       "src/index.js",
       "src/index.html",
+      "src-flask-server/app.py",
       "src-flask-server/static/js/hello.js",
       "bin/whos-on-flask-port",
       "bin/whos-on-flask-port.bat",

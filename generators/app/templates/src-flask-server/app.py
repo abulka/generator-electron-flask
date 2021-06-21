@@ -30,7 +30,7 @@ app = Flask(__name__,
 app.config['DEBUG'] = True  # true will cause double load on startup
 app.config['EXPLAIN_TEMPLATE_LOADING'] = False  # won't work unless debug is on
 
-# CORS(app, origins='http://localhost:8000')
+# CORS(app, origins='http://localhost:<%= portFlask %>')
 CORS(app)
 
 api = Api(app)
@@ -51,5 +51,5 @@ def hello():
 
 
 if __name__ == "__main__":
-    app.run()
-    # app.run(host="localhost", port=8000, debug=True)
+    # app.run()
+    app.run(host="localhost", port=<%= portFlask %>, debug=True)
