@@ -96,7 +96,6 @@ const createWindow = () => {
   <% if (launchFlask) { %>
     if (process.env.ELECTRON_FLASK_DONT_LAUNCH_FLASK == "1") {
       console.log('Electron app is NOT auto launching flask process - assuming you have launched it independently, for debugging purposes.')
-      alert('Ensure you have launched flask somewhere.')
     }
     else {
       runFlask()
@@ -107,8 +106,8 @@ const createWindow = () => {
 
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 1000,
+    height: 800,
   });
 
   // and load the index.html of the app.
@@ -142,7 +141,7 @@ app.on('window-all-closed', () => {
     kill(subpy.pid, 'SIGKILL', function(err) {
       console.log('done killing flask')
       
-      // PARTIAL - Mac quit
+      // App quit() logic
       <% if (macFullyQuit) { %>
       app.quit();
       <% } else { %>  
@@ -150,13 +149,12 @@ app.on('window-all-closed', () => {
         app.quit();
       }
       <% } %>  
-      // END PARTIAL - Mac quit
         
     });
 
   }
   else {
-      // PARTIAL - Mac quit
+      // App quit() logic
       <% if (macFullyQuit) { %>
       app.quit();
       <% } else { %>  
@@ -164,12 +162,11 @@ app.on('window-all-closed', () => {
         app.quit();
       }
       <% } %>  
-      // END PARTIAL - Mac quit
   }
 
   <% } else { %>  
 
-      // PARTIAL - Mac quit
+      // App quit() logic
       <% if (macFullyQuit) { %>
       app.quit();
       <% } else { %>  
@@ -177,7 +174,6 @@ app.on('window-all-closed', () => {
         app.quit();
       }
       <% } %>  
-      // END PARTIAL - Mac quit
 
   <% } %>  
   

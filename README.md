@@ -173,6 +173,32 @@ local js and python libraries and runtimes, to ignore
     node_modules
     venv
 
+## Page navigation
+
+Links to flask rendered pages in the renderer process html e.g. if
+`src/index.html` contained
+    
+    <a href="http://localhost:5000/hello">hello</a>
+
+is bad because whilst it works, you navigate away from the render process html
+page and can never navigate back. This means you lose the ability to talk to the
+render process from flask pages - which is a useful thing to be able to do. You
+also give up the ability to talk to the electron main process via the render
+process html page.
+
+### Solution to page navigation
+The solution is to load flask pages into an iframe instead. This way the render
+process html always exists. Flask pages can then communicate with the render
+process html `src/index.html` using custom events (note event bubbling won't
+work because it stops at document boundaries). Also flask html pages can
+communicate with the main process `src/index.js` via the render
+process html using standard electron communication techniques.
+
+And of course all of the following can communicate with the flask server:
+- the electron render process html `src/index.html`
+- the election main process `src/index.js`
+- flask rendered pages
+
 # Debugging your generated project
 
 You can debug both electron and flask in the vscode debugger.
