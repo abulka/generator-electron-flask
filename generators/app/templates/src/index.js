@@ -108,6 +108,13 @@ const createWindow = () => {
   const mainWindow = new BrowserWindow({
     width: 1000,
     height: 800,
+
+    // Turn off to allow events from iframe flask pages to get into render process html
+    // there may be other solutions e.g. https://stackoverflow.com/questions/25098021/securityerror-blocked-a-frame-with-origin-from-accessing-a-cross-origin-frame
+    // whereby this can be kept true.
+    webPreferences: {
+      webSecurity: false
+    }
   });
 
   // and load the index.html of the app.
