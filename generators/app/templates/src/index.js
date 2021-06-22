@@ -120,6 +120,10 @@ const createWindow = () => {
   <% } %>  
 };
 
+// Disable iframe navigation blocked warnings, possibly there is a better solution.
+// https://stackoverflow.com/questions/55898000/blocked-a-frame-with-origin-file-from-accessing-a-cross-origin-frame
+app.commandLine.appendSwitch('disable-site-isolation-trials');
+
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
