@@ -157,6 +157,8 @@ module.exports = class extends Generator {
     };
 
     copyOpts.globOptions.ignore.push(src + "/dummyfile.txt");
+    copyOpts.globOptions.ignore.push(src + "/_vscode"); // will be explicitly copied later
+    copyOpts.globOptions.ignore.push(src + "/_gitignore"); // will be explicitly copied later
 
     // This copies everything in templates/ dir into destinationPath. No template substitution though.
     this.fs.copy(src, dest, copyOpts);
@@ -201,20 +203,24 @@ module.exports = class extends Generator {
         copyOpts
       );
     });
-    this._copyGitIgnore();
-    this._copyVscodeDir();
+    this._copyWithRenameGitignoreFile();
+    this._copyWithRenameVscodeDir();
   }
 
-  _copyGitIgnore() {
-    this.fs.copyTpl(
+  _copyWithRenameGitignoreFile() {
+    this.fs.copy(
       this.templatePath("_gitignore"),
       this.destinationPath(`${this.props.name}/.gitignore`),
       this.props
     );
   }
 
-  _copyVscodeDir() {
-    this.fs.copy(this.templatePath("_vscode"), this.destinationPath(".vscode"));
+  _copyWithRenameVscodeDir() {
+    this.fs.copy(
+      this.templatePath("_vscode"), // copy entire directory
+      this.destinationPath(`${this.props.name}/.vscode`),
+      this.props
+    );
   }
 
   install() {
