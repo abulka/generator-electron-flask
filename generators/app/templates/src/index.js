@@ -81,8 +81,12 @@ function runFlask() {
 
 const createWindow = () => {
   <% if (launchFlask) { %>
-    runFlask()
-    console.log('Flask process id', subpy.pid)
+    if (process.env.ELECTRON_FLASK_DONT_LAUNCH_FLASK == "1") 
+      console.log('Electron app is NOT auto launching flask process - assuming you have launched it independently, for debugging purposes.')
+    else {
+      runFlask()
+      console.log('Flask process id', subpy.pid)
+    }
   <% } %>  
 
 
@@ -113,29 +117,48 @@ app.on('window-all-closed', () => {
 
   <% if (launchFlask && killFlask) { %>
 
-  console.log('kill', subpy.pid)
-  kill(subpy.pid, 'SIGKILL', function(err) {
-    console.log('done killing flask')
-    
-    <% if (macFullyQuit) { %>
-    app.quit();
-    <% } else { %>  
-    if (process.platform !== 'darwin') {
-      app.quit();
-    }
-    <% } %>  
+  if (subpy) {
+  
+    console.log('kill', subpy.pid)
+    kill(subpy.pid, 'SIGKILL', function(err) {
+      console.log('done killing flask')
       
-  });
+      // PARTIAL - Mac quit
+      <% if (macFullyQuit) { %>
+      app.quit();
+      <% } else { %>  
+      if (process.platform !== 'darwin') {
+        app.quit();
+      }
+      <% } %>  
+      // END PARTIAL - Mac quit
+        
+    });
+
+  }
+  else {
+      // PARTIAL - Mac quit
+      <% if (macFullyQuit) { %>
+      app.quit();
+      <% } else { %>  
+      if (process.platform !== 'darwin') {
+        app.quit();
+      }
+      <% } %>  
+      // END PARTIAL - Mac quit
+  }
 
   <% } else { %>  
 
-    <% if (macFullyQuit) { %>
-    app.quit();
-    <% } else { %>  
-    if (process.platform !== 'darwin') {
+      // PARTIAL - Mac quit
+      <% if (macFullyQuit) { %>
       app.quit();
-    }
-    <% } %>  
+      <% } else { %>  
+      if (process.platform !== 'darwin') {
+        app.quit();
+      }
+      <% } %>  
+      // END PARTIAL - Mac quit
 
   <% } %>  
   

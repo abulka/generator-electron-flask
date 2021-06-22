@@ -1,0 +1,51 @@
+<!doctype html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+
+    <title>Hello</title>
+
+    <!-- You MUST include jQuery before Fomantic -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+
+    <!-- Fomantic -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.8.7/dist/semantic.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/fomantic-ui@2.8.7/dist/semantic.min.js"></script>
+
+    <!-- Vue -->
+    <script src="https://unpkg.com/vue@next"></script>
+
+</head>
+
+<body>
+
+    <p>hi there {{msg}}</p>
+
+    <div style="width:100%; padding-left: 30%; padding-right: 30%;">
+        <img src="{{ url_for('static', filename='images/hello.png')}}">
+    </div>
+
+    <div id="hello-vue" class="demo">
+        Message is: ${ message }
+    
+        <div class="inline field">
+          <button class="ui button green" v-on:click="getInfo">
+            getInfo
+          </button>
+    </div>
+    
+    <li><a href="http://localhost:5000/index.html">localhost:5000/index.html</a></li>
+    <li><a href="atomxx://index.html">atomxx://index.html</a></li>
+    <li><a href="http://example.com">http://example.com</a></li>
+    
+    <script type="module">
+        import { blah, xx, HelloVueApp } from '/static/js/hello-vue.js'
+        console.log('blah', blah(), 'xx', xx)
+        Vue.createApp(HelloVueApp).mount('#hello-vue')
+    </script>
+
+</body>
+
+</html>

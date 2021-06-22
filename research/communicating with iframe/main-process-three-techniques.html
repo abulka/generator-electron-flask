@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Hello World!</title>
+    <link rel="stylesheet" href="index.css">
+
+    
+
+    <!-- You MUST include jQuery before Fomantic -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+
+    <!-- Fomantic -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.8.7/dist/semantic.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/fomantic-ui@2.8.7/dist/semantic.min.js"></script>
+
+    <!-- Vue -->
+    <script src="https://unpkg.com/vue@next"></script>
+
+    
+
+  </head background="cyan" >
+  <body>
+    <h1>💖 Hello World!</h1>
+    <p>Welcome to your Electron application.</p>
+
+    
+    <div id="electron-index-vue" class="demo">
+      Message is: {{ message }}
+  
+      <div class="inline field">
+        <button class="ui button green" v-on:click="getInfo">
+          getInfo
+        </button>
+        <button class="ui button green" v-on:click="sendEventToIframe">
+          sendEventToIframe
+        </button>
+      </div>
+  
+      <ul>
+        <p>The following will take you to a flask rendered pages!</p>
+        <li><a href="http://localhost:5000/hello">hello</a></li>
+        <li><a href="http://localhost:5000/hello-vue">hello-vue</a></li>
+      </ul>
+    </div>
+
+
+    <!-- f3  iframe -->
+    <iframe id="iframeout" class="runtime-output" style="height: 100%; width: 100%;" srcdoc="<p>Hello world!</p>">
+      <p>Your browser does not support iframes.</p>
+    </iframe>    
+
+
+    <script>
+      const IndexVueApp = {
+        data() {
+          return {
+            message: 'Hello Vue!!'
+          }
+        },
+        methods: {
+          getInfo() {
+            $.ajax({
+              method: "GET",
+              url: `http://localhost:5000`,
+              data: {},
+              // contentType: "application/json",
+              success: response => {
+                this.message = response
+              }
+            });
+          },
+          sendEventToIframe() {
+            let event = new CustomEvent('myCustomEvent', { detail: { foo: 'bar2' } })
+            document.querySelector('iframe.runtime-output').contentDocument.dispatchEvent(event)
+          }
+
+        },
+      }
+  
+      Vue.createApp(IndexVueApp).mount('#electron-index-vue')
+
+
+      let output_html = `
+      <ul>
+        <p>The following will take you to a flask rendered pages!</p>
+        <li><a href="http://localhost:5000/hello">hello</a></li>
+        <li><a href="http://localhost:5000/hello-vue">hello-vue</a></li>
+        <li><a href="#" id="fred">fred</a></li>
+        <li><a href="javascript:parent.doFunction();">run js parent.doFunction();</a></li>
+        <li><a href="javascript:window.parent.document.dispatchEvent(new CustomEvent('myCustomEvent', { detail: { foo: 'bar' } }));">new CustomEvent('myCustomEvent')</a></li>
+      </ul>
+      `
+      // technique 0
+      let iframe = document.querySelector('iframe.runtime-output')
+      iframe.srcdoc = output_html
+      // Extra key handling attached dynamically, so that even when you
+      // navigate to other pages, the onload triggers and this code is
+      // re-added, allowing you to always hit F3 to escape out of run mode.
+      // This is only needed if you actually FOCUS click on stuff inside frame.
+      iframe.onload = function () {
+          const src = `
+              window.document.addEventListener('myCustomEvent', handleEvent2, false)
+              function handleEvent2(e) {
+                console.log(e.detail)
+                alert('handleEvent2() called - we are in the iframe page!')
+              }
+              // // Shortcut keys
+              // document.addEventListener('keydown', logKey);
+              // function logKey(e) {
+              //     // Shortcut key - for exiting f3 mode when focus is inside the iframe
+              //     if (e.code == 'F3') {
+              //         var event = new KeyboardEvent('keydown', { keyCode: 70, ctrlKey: false, which: 114, code: 'F3' })
+              //         window.parent.document.dispatchEvent(event)
+              //     }
+              //     // Shortcut key - for saving a thumbnail of page esp. in run mode
+              //     if (e.code === 'KeyS' && e.altKey && e.shiftKey) {
+              //         var event = new KeyboardEvent('keydown', { keyCode: e.keyCode, which: e.which, ctrlKey: false, shiftKey: true, altKey: true, code: e.code })
+              //         window.parent.document.dispatchEvent(event)
+              //     }
+              // }
+              console.log('iframe loaded ok')
+          `
+          const script = iframe.contentWindow.document.createElement("script");
+          script.type = "text/javascript";
+          script.innerHTML = src  // script.src = src; doesn't work
+          iframe.contentWindow.document.body.appendChild(script);
+
+      }
+      
+
+
+
+
+
+
+
+      function doFunction() {
+        console.log('doFunction() called')
+        alert('doFunction() called - we are in renderer process!')
+      }
+      
+      // technique 1 - custom event
+      window.document.addEventListener('myCustomEvent', handleEvent, false)
+      function handleEvent(e) {
+        console.log(e.detail) // outputs: {foo: 'bar'}
+        alert('handleEvent() called - we are in renderer process!')
+      }
+
+
+    </script>    
+    
+    
+  </body>
+</html>
