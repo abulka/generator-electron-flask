@@ -203,7 +203,7 @@ And of course all of the following can communicate with the flask server:
 
 Note that Electron restarts the renderer process when a new URL is loaded, so you'll probably see a flash when that happens. This is why it's usually best to use a single page application (SPA) architecture when building Electron apps.  https://stackoverflow.com/questions/39880979/electron-how-to-load-a-html-file-into-the-current-window
 
-Note that the iframe based solution is a kind of combination SPA (in the sense that the renderer process html stays around and is the `S` in SPA) and has the flash multiple pages via the iframe.
+Note that the iframe based solution is a kind of combination SPA (in the sense that the renderer process html stays around and is the `S` in SPA) and has the multiple flask pages _via the iframe_.
 
 # Debugging your generated project
 
