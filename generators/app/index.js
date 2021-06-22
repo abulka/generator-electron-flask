@@ -202,14 +202,19 @@ module.exports = class extends Generator {
       );
     });
     this._copyGitIgnore();
+    this._copyVscodeDir();
   }
 
   _copyGitIgnore() {
     this.fs.copyTpl(
-      this.templatePath(".gitignorefile"),
+      this.templatePath("_gitignore"),
       this.destinationPath(`${this.props.name}/.gitignore`),
       this.props
     );
+  }
+
+  _copyVscodeDir() {
+    this.fs.copy(this.templatePath("_vscode"), this.destinationPath(".vscode"));
   }
 
   install() {
