@@ -1,5 +1,7 @@
 const { app, BrowserWindow } = require('electron');
 const path = require('path');
+const request = require('request');
+
 <% if (killFlask) { %>
 const kill  = require('tree-kill');
 <% } %>
@@ -52,6 +54,15 @@ const guessPackaged = () => {
 }
 log.info('pythonExePath', pythonExePath, 'packaged mode?', guessPackaged())
 
+function checkFlask() {
+  request('http://localhost:5000/', { json: true }, (err, res, body) => {
+    if (err)
+      console.log(`Could not communicate with flask server ${err}`)
+    else if (res.statusCode != 200)
+      console.log(`Could not communicate with flask server ${res.statusCode} ${body}`)
+  });
+}
+
 function runFlask() {
   // Launch Flask as a child process, wires up stdout and stderr so we can see them
   // in the electron main process console.  Remember Python needs to flush stdout
@@ -81,14 +92,16 @@ function runFlask() {
 
 const createWindow = () => {
   <% if (launchFlask) { %>
-    if (process.env.ELECTRON_FLASK_DONT_LAUNCH_FLASK == "1") 
+    if (process.env.ELECTRON_FLASK_DONT_LAUNCH_FLASK == "1") {
       console.log('Electron app is NOT auto launching flask process - assuming you have launched it independently, for debugging purposes.')
+      alert('Ensure you have launched flask somewhere.')
+    }
     else {
       runFlask()
       console.log('Flask process id', subpy.pid)
     }
   <% } %>  
-
+  checkFlask()
 
   // Create the browser window.
   const mainWindow = new BrowserWindow({

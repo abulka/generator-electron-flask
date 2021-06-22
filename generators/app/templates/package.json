@@ -50,6 +50,7 @@
     }
   },
   "dependencies": {
+    "request": "^2.88.2",
     "electron-squirrel-startup": "^1.0.0"<% if (electronLog) { %>,
     "electron-log": "^4.3.5"<% } %><% if (killFlask) { %>,
     "tree-kill": "^1.2.2"<% } %><% if (reportCwd) { %>,
