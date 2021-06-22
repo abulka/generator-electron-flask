@@ -37,7 +37,13 @@
             </button>
         </div>
 
-        <li><a href="/hello">/hello</a></li>
+        <ul>
+            <p>Communication from iframe FLASK pages to electron render process html - not currently working</p>
+            <li><a href="javascript:window.parent.document.dispatchEvent(new CustomEvent('eventFromIframePage', { detail: { foo: 'bar' } }));">Send event to window.parent</a></li>
+            <li><a href="javascript:window.top.document.dispatchEvent(new CustomEvent('eventFromIframePage', { detail: { foo: 'bar' } }));">Send event to window.top</a></li>
+          </ul>
+
+        <a href="/hello">/hello</a>
     </div>
 
     <script type="module">

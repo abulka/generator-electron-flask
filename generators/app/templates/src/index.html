@@ -48,7 +48,7 @@
       <!-- iframe for flask pages-->
       <br>
       <p style="background-color: aquamarine;">This is the iframe where flask pages should be loaded</p>
-      <iframe id="iframeout" class="runtime-output" style="height: 100%; width: 100%" srcdoc="">
+      <iframe id="iframeout" class="flask-pages" style="height: 100%; width: 100%" srcdoc="">
         <p>Your browser does not support iframes.</p>
       </iframe>
 
@@ -72,8 +72,8 @@
               });
             },
             sendEventToIframe() {
-              let event = new CustomEvent('myCustomEventForIframe', { detail: { foo: 'bar2' } })
-              document.querySelector('iframe.runtime-output').contentDocument.dispatchEvent(event)
+              let event = new CustomEvent('eventFromRenderProcess', { detail: { foo: 'bar2' } })
+              document.querySelector('iframe.flask-pages').contentDocument.dispatchEvent(event)
             },
             doBootIframe() {
               bootIframe()
@@ -93,24 +93,25 @@
               <li><a href="http://localhost:5000/hello-vue">hello-vue</a></li>
             </ul>
             <ul>
-              <p>Communication with iframe tests</p>
-              <li><a href="javascript:window.parent.document.dispatchEvent(new CustomEvent('myCustomEvent', { detail: { foo: 'bar' } }));">Send myCustomEvent to parent of iframe (TO render process)</a></li>
-              <li><a href="javascript:window.top.document.dispatchEvent(new CustomEvent('myCustomEvent', { detail: { foo: 'bar' } }));">Send myCustomEvent to window.top (TO render process)</a></li>
+              <p>Communication from iframe pages to electron render process html</p>
+              <li><a href="javascript:window.parent.document.dispatchEvent(new CustomEvent('eventFromIframePage', { detail: { foo: 'bar' } }));">Send event to window.parent</a></li>
+              <li><a href="javascript:window.top.document.dispatchEvent(new CustomEvent('eventFromIframePage', { detail: { foo: 'bar' } }));">Send event to window.top</a></li>
             </ul>
             `
-          let iframe = document.querySelector('iframe.runtime-output')
+          let iframe = document.querySelector('iframe.flask-pages')
           iframe.srcdoc = output_html
 
-          // Initialise iframe, append some script
+          // Initialise iframe, append some script - but interesting, this stays around even when navigate away!
           iframe.onload = function () {
             const src = `
-                window.document.addEventListener('myCustomEventForIframe', handleEvent, false)
+                // Example of listening for events from render process html - any flask page should also add this kind of code
+                window.document.addEventListener('eventFromRenderProcess', handleEvent, false)
                 function handleEvent(e) {
                   console.log(e.detail)
-                  alert('handleEvent() called - we are in the iframe page!')
+                  alert('iframe BOOT page received event from electron render process.')
                 }
 
-                console.log('iframe loaded ok')
+                console.log('iframe BOOT page loaded ok')
             `
             const script = iframe.contentWindow.document.createElement("script");
             script.type = "text/javascript";
@@ -122,11 +123,13 @@
         bootIframe()
 
 
-        // Listen for custom events from iframe
-        window.document.addEventListener('myCustomEvent', handleEvent, false)
+        // In electron render process html, listen for possible custom events from iframe pages
+        // You could in turn talk to the electron main process from here, thus offering a way for
+        // flask pages to talk to both the render process and the main process.
+        window.document.addEventListener('eventFromIframePage', handleEvent, false)
         function handleEvent(e) {
           console.log(e.detail)
-          alert('handleEvent() called - we are in renderer process!')
+          alert('electron render process html received event from iframe page.')
         }
 
       </script>

@@ -36,3 +36,10 @@ export const HelloVueApp = {
     },
     delimiters: ["${", "}"]
 }
+
+// Example of listening for events from render process html
+window.document.addEventListener('eventFromRenderProcess', handleEvent, false)
+function handleEvent(e) {
+    console.log(e.detail)
+    alert('iframe FLASK page received event from electron render process')
+}
