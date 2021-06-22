@@ -61,7 +61,7 @@ function checkFlask() {
     else if (res.statusCode != 200)
       console.log(`Could not communicate with flask server ${res.statusCode} ${body}`)
     else
-      console.log('Communication with flask server is OK')
+      console.log('Communication with flask server is OK 🎉')
   });
 }
 

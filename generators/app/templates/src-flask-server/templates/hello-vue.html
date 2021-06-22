@@ -30,15 +30,16 @@
 
     <div id="hello-vue" class="demo">
         Message is: ${ message }
-    
+
         <div class="inline field">
-          <button class="ui button green" v-on:click="getInfo">
-            getInfo
-          </button>
+            <button class="ui button green" v-on:click="getInfo">
+                getInfo
+            </button>
+        </div>
+
+        <li><a href="/hello">/hello</a></li>
     </div>
-    
-    <li><a href="/hello">/hello</a></li>
-    
+
     <script type="module">
         import { blah, xx, HelloVueApp } from '/static/js/hello-vue.js'
         console.log('blah', blah(), 'xx', xx)
