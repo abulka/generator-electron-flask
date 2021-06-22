@@ -240,14 +240,6 @@ Using vscode you can launch the flask app with
 
 Note the setting of `FLASK_APP` has been changed from the default of `"app.py"` to `"src-flask-server.app"` to reflect that the flask project is in a subdirectory.
 
-Note that the auto launching of the flask app from withing the electron main process `src/index.js` will fail if you already have flask running in this way (via vscode, for debugging purposes). So we have an environment variable to stop launching it.  E.g. in the electron launcher launch config, add:
-
-```json
-    "env": {
-        "ELECTRON_FLASK_DONT_LAUNCH_FLASK": "1"
-    }, 
-```
-
 
 # Misc Notes
 

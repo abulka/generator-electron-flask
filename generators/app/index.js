@@ -191,8 +191,7 @@ module.exports = class extends Generator {
       reportCwd: this.props.misc.includes("reportCwd"),
       demoVueMain: this.props.misc.includes("demoVueMain"),
       macFullyQuit: this.props.misc.includes("macFullyQuit"),
-      openDevTools: this.props.misc.includes("openDevTools"),
-      partialFlaskQuit
+      openDevTools: this.props.misc.includes("openDevTools")
     };
     files.forEach(file => {
       this.fs.copyTpl(
