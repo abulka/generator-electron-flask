@@ -92,6 +92,8 @@ function runFlask() {
 }
 <% } %>  
 
+let mainWindow = null;
+
 const createWindow = () => {
   <% if (launchFlask) { %>
     if (process.env.ELECTRON_FLASK_DONT_LAUNCH_FLASK == "1") {
@@ -105,7 +107,7 @@ const createWindow = () => {
   checkFlask()
 
   // Create the browser window.
-  const mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 1000,
     height: 800,
 
@@ -135,56 +137,80 @@ app.commandLine.appendSwitch('disable-site-isolation-trials');
 // Some APIs can only be used after this event occurs.
 app.on('ready', createWindow);
 
+// Hitting File/Quit bypasses closing of the window and comes straight here, so 
+// detect this, wait for main window and python to close, then this quit handler will be 
+// retriggered by 'window-all-closed' calling app.quit() again
+app.on("before-quit", function (event) {
+  if (mainWindow) {
+    event.preventDefault();  // stop the quit
+    mainWindow.close();  // close window, which will then trigger 'window-all-closed'
+  }
+});
+
+/*
+normal quit
+  window-all-closed
+  before quit
+file quit 
+  before quit
+*/
+function killFlask() {
+  <% if (launchFlask && killFlask) { %>
+
+    if (subpy) {
+    
+      console.log('kill', subpy.pid)
+      kill(subpy.pid, 'SIGKILL', function(err) {
+        console.log('done killing flask')
+        
+        // App quit() logic
+        <% if (macFullyQuit) { %>
+        mainWindow = null  
+        app.quit();
+        <% } else { %>  
+        if (process.platform !== 'darwin') {
+          mainWindow = null  
+          app.quit();
+        }
+        <% } %>  
+          
+      });
+  
+    }
+    else {
+        // App quit() logic
+        <% if (macFullyQuit) { %>
+        mainWindow = null  
+        app.quit();
+        <% } else { %>  
+        if (process.platform !== 'darwin') {
+          mainWindow = null  
+          app.quit();
+        }
+        <% } %>  
+    }
+  
+    <% } else { %>  
+  
+        // App quit() logic
+        <% if (macFullyQuit) { %>
+        mainWindow = null  
+        app.quit();
+        <% } else { %>  
+        if (process.platform !== 'darwin') {
+          mainWindow = null  
+          app.quit();
+        }
+        <% } %>  
+  
+    <% } %>    
+}
+
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits
 // explicitly with Cmd + Q.
 app.on('window-all-closed', () => {
-
-  <% if (launchFlask && killFlask) { %>
-
-  if (subpy) {
-  
-    console.log('kill', subpy.pid)
-    kill(subpy.pid, 'SIGKILL', function(err) {
-      console.log('done killing flask')
-      
-      // App quit() logic
-      <% if (macFullyQuit) { %>
-      app.quit();
-      <% } else { %>  
-      if (process.platform !== 'darwin') {
-        app.quit();
-      }
-      <% } %>  
-        
-    });
-
-  }
-  else {
-      // App quit() logic
-      <% if (macFullyQuit) { %>
-      app.quit();
-      <% } else { %>  
-      if (process.platform !== 'darwin') {
-        app.quit();
-      }
-      <% } %>  
-  }
-
-  <% } else { %>  
-
-      // App quit() logic
-      <% if (macFullyQuit) { %>
-      app.quit();
-      <% } else { %>  
-      if (process.platform !== 'darwin') {
-        app.quit();
-      }
-      <% } %>  
-
-  <% } %>  
-  
-  
+  killFlask()
 });
 
 app.on('activate', () => {
