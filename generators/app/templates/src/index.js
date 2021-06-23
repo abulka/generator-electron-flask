@@ -1,10 +1,8 @@
 const { app, BrowserWindow } = require('electron');
 const path = require('path');
-const request = require('request');
+const { setMainWindow, getMainWindow, closeMainWindow } = require('./bootflask.js');
+const { runFlask, checkFlask, killFlask } = require('./bootflask.js');
 
-<% if (killFlask) { %>
-const kill  = require('tree-kill');
-<% } %>
 <% if (reportVersions) { %>
 const os = require('os');
 <% } %>
@@ -36,89 +34,18 @@ if (require('electron-squirrel-startup')) { // eslint-disable-line global-requir
   app.quit();
 }
 
-<% if (launchFlask) { %>
-// Figure out the Resources/ dir inside the electron app bundle.
-let resourcesPath = process.resourcesPath;
-
-// Figure out the Python executable path, based on the name 'app.py' built by
-// Pyinstaller.  Note in the path below, the first 'app' refers to the path
-// inside the Electron executable bundle, and the second 'app' is the name of
-// the Python executable file.
-let pythonExePath = path.join(process.resourcesPath, 'app', 'dist', process.platform === "win32" ? 'app.exe' : 'app');
-
-// Record the process id of the Python flask child process so that we can kill it later.
-let subpy;
-
-const guessPackaged = () => {
-  return require('fs').existsSync(pythonExePath)
-}
-log.info('pythonExePath', pythonExePath, 'packaged mode?', guessPackaged())
-
-let numAttempts = 0
-const maxAttemptsAllowed = 2
-function checkFlask() {
-  request('http://localhost:5000/', { json: true }, (err, res, body) => {
-    if (err) {
-      if (numAttempts > 1)
-        console.log(`Could not communicate with flask server ${err} 🤔 - its probably still starting up, waiting...`)
-      numAttempts++
-      if (numAttempts > maxAttemptsAllowed)
-        console.log(`Could not communicate with flask server ${err} 🆘 - gave up.`)
-      else
-        setTimeout(function() {
-          checkFlask()
-        }, 1000);
-    }
-    else if (res.statusCode != 200)
-      console.log(`Wrong response code from flask server ${res.statusCode} ${body} ⁉️⁉️⁉️ ⚠️`)
-    else
-      console.log('Communication with flask server is OK 🎉')
-  });
-}
-
-function runFlask() {
-  // Launch Flask as a child process, wires up stdout and stderr so we can see them
-  // in the electron main process console.  Remember Python needs to flush stdout
-
-  // Actually no need to pass options and change cwd since that's all taken care of INTERNALLY inside the 
-  // python app - it has the templates dir internally, which is unzipped into /tmp
-  options = {}
-  // options = {cwd: app_src_path }
-  
-  if (guessPackaged())
-    subpy = require('child_process').spawn(pythonExePath, [], options);  // prod
-  else
-    subpy = require('child_process').spawn('python', [path.join(__dirname, '..', 'src-flask-server', 'app.py')]);  // dev
-
-  subpy.stdout.on('data', function (data) {
-    let msg = `PYTHON stdout: ${data.toString('utf8')}`
-    msg = msg.replace(/\n+$/, "")
-    console.log(msg);
-  });
-  subpy.stderr.on('data', (data) => {
-    let msg = `PYTHON stderr: ${data}`
-    msg = msg.replace(/\n+$/, "")
-    console.log(msg); // when error
-  });
-}
-<% } %>  
-
-let mainWindow = null;
 
 const createWindow = () => {
-  <% if (launchFlask) { %>
-    if (process.env.ELECTRON_FLASK_DONT_LAUNCH_FLASK == "1") {
-      console.log('Electron app is NOT auto launching flask process - assuming you have launched it independently, for debugging purposes.')
-    }
-    else {
-      runFlask()
-      console.log('Flask process id', subpy.pid)
-    }
-  <% } %>  
+  if (process.env.ELECTRON_FLASK_DONT_LAUNCH_FLASK == "1") {
+    console.log('Electron app is NOT auto launching flask process - assuming you have launched it independently, for debugging purposes.')
+  }
+  else {
+    runFlask()
+  }
   checkFlask()
 
   // Create the browser window.
-  mainWindow = new BrowserWindow({
+  const _mainWindow = new BrowserWindow({
     width: 1000,
     height: 800,
 
@@ -131,12 +58,14 @@ const createWindow = () => {
   });
 
   // and load the index.html of the app.
-  mainWindow.loadFile(path.join(__dirname, 'index.html'));
+  _mainWindow.loadFile(path.join(__dirname, 'index.html'));
 
   <% if (openDevTools) { %>
   // Open the DevTools.
-  mainWindow.webContents.openDevTools();
-  <% } %>  
+  _mainWindow.webContents.openDevTools();
+  <% } %>
+
+  setMainWindow(_mainWindow) 
 };
 
 // Disable iframe navigation blocked warnings, possibly there is a better solution.
@@ -152,76 +81,17 @@ app.on('ready', createWindow);
 // detect this, wait for main window and python to close, then this quit handler will be 
 // retriggered by 'window-all-closed' calling app.quit() again
 app.on("before-quit", function (event) {
-  if (mainWindow) {
+  if (getMainWindow()) {
     event.preventDefault();  // stop the quit
-    mainWindow.close();  // close window, which will then trigger 'window-all-closed'
+    closeMainWindow();  // close window, which will then trigger 'window-all-closed'
   }
 });
-
-/*
-normal quit
-  window-all-closed
-  before quit
-file quit 
-  before quit
-*/
-function killFlask() {
-  <% if (launchFlask && killFlask) { %>
-
-    if (subpy) {
-    
-      console.log('kill', subpy.pid)
-      kill(subpy.pid, 'SIGKILL', function(err) {
-        console.log('done killing flask')
-        
-        // App quit() logic
-        <% if (macFullyQuit) { %>
-        mainWindow = null  
-        app.quit();
-        <% } else { %>  
-        if (process.platform !== 'darwin') {
-          mainWindow = null  
-          app.quit();
-        }
-        <% } %>  
-          
-      });
-  
-    }
-    else {
-        // App quit() logic
-        <% if (macFullyQuit) { %>
-        mainWindow = null  
-        app.quit();
-        <% } else { %>  
-        if (process.platform !== 'darwin') {
-          mainWindow = null  
-          app.quit();
-        }
-        <% } %>  
-    }
-  
-    <% } else { %>  
-  
-        // App quit() logic
-        <% if (macFullyQuit) { %>
-        mainWindow = null  
-        app.quit();
-        <% } else { %>  
-        if (process.platform !== 'darwin') {
-          mainWindow = null  
-          app.quit();
-        }
-        <% } %>  
-  
-    <% } %>    
-}
 
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits
 // explicitly with Cmd + Q.
 app.on('window-all-closed', () => {
-  killFlask()
+  killFlask(app)
 });
 
 app.on('activate', () => {

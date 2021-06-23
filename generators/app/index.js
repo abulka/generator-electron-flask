@@ -39,16 +39,6 @@ module.exports = class extends Generator {
         default: "myapp"
       },
       {
-        type: "list",
-        name: "license",
-        message: this.options.licensePrompt,
-        default: this.options.defaultLicense,
-        when:
-          !this.options.license ||
-          licenses.find(x => x.value === this.options.license) === undefined,
-        choices: licenses
-      },
-      {
         name: "description",
         message: "Description",
         default: "My Electron application description"
@@ -69,18 +59,22 @@ module.exports = class extends Generator {
         store: true
       },
       {
+        type: "list",
+        name: "license",
+        message: this.options.licensePrompt,
+        default: this.options.defaultLicense,
+        when:
+          !this.options.license ||
+          licenses.find(x => x.value === this.options.license) === undefined,
+        choices: licenses
+      },
+      {
         name: "keywords",
         message: "Package keywords (comma to split)",
         // when: !this.pkg.keywords,
         filter(words) {
           return words.split(/\s*,\s*/g);
         }
-      },
-      {
-        type: "confirm",
-        name: "launchFlask",
-        message: "Would you like to launch flask server on electron startup?",
-        default: true
       },
       {
         name: "portFlask",
@@ -94,11 +88,6 @@ module.exports = class extends Generator {
         message: "Choose from misc options",
         choices: [
           { name: "Electron logging", value: "electronLog" },
-          {
-            name: "Kill flask server on electron exit",
-            value: "killFlask"
-            // disabled: !this.props.launchFlask
-          },
           {
             name: "Print current working directory on startup",
             value: "reportCwd"
@@ -120,13 +109,7 @@ module.exports = class extends Generator {
             value: "demoVueMain"
           }
         ],
-        default: [
-          "electronLog",
-          "killFlask",
-          "macFullyQuit",
-          "openDevTools",
-          "demoVueMain"
-        ]
+        default: ["electronLog", "macFullyQuit", "openDevTools", "demoVueMain"]
       }
     ];
 
@@ -167,6 +150,7 @@ module.exports = class extends Generator {
     const files = [
       "package.json",
       "src/index.js",
+      "src/boot-flask.js",
       "src/index.html",
       "src-flask-server/app.py",
       "src-flask-server/static/js/hello-vue.js",
@@ -185,9 +169,7 @@ module.exports = class extends Generator {
       authorEmail: this.props.authorEmail,
       license: this.props.license,
       keywords: this.props.keywords,
-      launchFlask: this.props.launchFlask,
       portFlask: this.props.portFlask,
-      killFlask: this.props.misc.includes("killFlask"),
       electronLog: this.props.misc.includes("electronLog"),
       reportVersions: this.props.misc.includes("reportVersions"),
       reportCwd: this.props.misc.includes("reportCwd"),
