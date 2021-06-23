@@ -54,12 +54,23 @@ const guessPackaged = () => {
 }
 log.info('pythonExePath', pythonExePath, 'packaged mode?', guessPackaged())
 
+let numAttempts = 0
+const maxAttemptsAllowed = 2
 function checkFlask() {
   request('http://localhost:5000/', { json: true }, (err, res, body) => {
-    if (err)
-      console.log(`Could not communicate with flask server ${err}`)
+    if (err) {
+      if (numAttempts > 1)
+        console.log(`Could not communicate with flask server ${err} 🤔 - its probably still starting up, waiting...`)
+      numAttempts++
+      if (numAttempts > maxAttemptsAllowed)
+        console.log(`Could not communicate with flask server ${err} 🆘 - gave up.`)
+      else
+        setTimeout(function() {
+          checkFlask()
+        }, 1000);
+    }
     else if (res.statusCode != 200)
-      console.log(`Could not communicate with flask server ${res.statusCode} ${body}`)
+      console.log(`Wrong response code from flask server ${res.statusCode} ${body} ⁉️⁉️⁉️ ⚠️`)
     else
       console.log('Communication with flask server is OK 🎉')
   });
