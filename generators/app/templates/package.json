@@ -22,7 +22,7 @@
       "packagerConfig": {
         <% if (launchFlask) { %>
         "extraResource": "",
-        "ignore": "venv/*|bin/*|build/*|src-flask-server/*"
+        "ignore": "/venv/*|/bin/*|/build/*|/src-flask-server/*"
         <% } %>
       },
       "makers": [

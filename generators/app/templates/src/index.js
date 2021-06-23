@@ -1,6 +1,6 @@
 const { app, BrowserWindow } = require('electron');
 const path = require('path');
-// const request = require('request'); // causes electron Error: Cannot find module "combined-stream" ?
+const request = require('request');
 
 <% if (killFlask) { %>
 const kill  = require('tree-kill');
@@ -104,7 +104,7 @@ const createWindow = () => {
       console.log('Flask process id', subpy.pid)
     }
   <% } %>  
-  // checkFlask()
+  checkFlask()
 
   // Create the browser window.
   mainWindow = new BrowserWindow({
