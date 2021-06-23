@@ -1,7 +1,7 @@
 const { app, BrowserWindow } = require('electron');
 const path = require('path');
-const { setMainWindow, getMainWindow, closeMainWindow } = require('./bootflask.js');
-const { runFlask, checkFlask, killFlask } = require('./bootflask.js');
+const { setMainWindow, getMainWindow, closeMainWindow } = require('./boot-flask.js');
+const { runFlask, checkFlask, killFlask } = require('./boot-flask.js');
 
 <% if (reportVersions) { %>
 const os = require('os');
