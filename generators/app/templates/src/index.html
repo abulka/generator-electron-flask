@@ -84,8 +84,14 @@
         Vue.createApp(IndexVueApp).mount('#electron-index-vue')
 
 
-        function bootIframe() {
-          // Initialise iframe content. Presumably would could init with a flask page too?
+        function bootIframe(initialUrl=undefined) {
+          // Initialise iframe content. Can also init with a flask page if supply a url.
+          if (initialUrl) {
+              let iframe = document.querySelector('iframe.flask-pages')
+              iframe.contentWindow.location.assign(initialUrl)
+              return
+          }
+
           let output_html = `
             <ul>
               <p>The following will take you to flask rendered pages!</p>
@@ -120,7 +126,8 @@
 
           }
         }
-        bootIframe()
+        // bootIframe()  // init with a custom hand coded page
+        bootIframe('http://localhost:5000/hello')  // init with a flask page
 
 
         // In electron render process html, listen for possible custom events from iframe pages
