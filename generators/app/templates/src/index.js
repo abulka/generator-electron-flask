@@ -42,37 +42,35 @@ const createWindow = () => {
   else {
     runFlask()
   }
-  checkFlask(cb_post_flask)
+  checkFlask(cb_post_flask)  // wait for flask server, then create window and load initial 'src/index.html'
 
-  // Create the browser window.
-  const _mainWindow = new BrowserWindow({
-    width: 1000,
-    height: 800,
-
-    // Turn off to allow events from iframe flask pages to get into render process html
-    // there may be other solutions e.g. https://stackoverflow.com/questions/25098021/securityerror-blocked-a-frame-with-origin-from-accessing-a-cross-origin-frame
-    // whereby this can be kept true.
-    webPreferences: {
-      webSecurity: false
-    }
-  });
-
-  // Load the initial page of the app. 
-  // Normally electron loads 'index.html' but we load 'boot-flask.html' till flask server starts, then load 'index.html'
-  _mainWindow.loadFile(path.join(__dirname, 'boot-flask.html'));
-  
-  <% if (openDevTools) { %>
-  // Open the DevTools.
-  _mainWindow.webContents.openDevTools();
-  <% } %>
-  
-  // let boot flask logic know about mainWindow to assist with proper quit
-  setMainWindow(_mainWindow) 
-  
-  function cb_post_flask() {
+   function cb_post_flask() {
     // Once flask is running, load the main window content, which usually loads a flask page,
     // which is why we need to wait for flask to be running.
+
+    // Create the browser window.
+    const _mainWindow = new BrowserWindow({
+      width: 1000,
+      height: 800,
+
+      // Turn off to allow events from iframe flask pages to get into render process html
+      // there may be other solutions e.g. https://stackoverflow.com/questions/25098021/securityerror-blocked-a-frame-with-origin-from-accessing-a-cross-origin-frame
+      // whereby this can be kept true.
+      webPreferences: {
+        webSecurity: false
+      }
+    });
+
+    // Load the initial page of the app. 
     _mainWindow.loadFile(path.join(__dirname, 'index.html'));
+    
+    <% if (openDevTools) { %>
+    // Open the DevTools.
+    _mainWindow.webContents.openDevTools();
+    <% } %>
+    
+    // let boot flask logic know about mainWindow to assist with proper quit
+    setMainWindow(_mainWindow) 
   }
 
 };

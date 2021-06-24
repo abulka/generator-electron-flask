@@ -91,13 +91,33 @@
 
 
         function bootIframe(initialUrl=undefined) {
-          // Initialise iframe content. Can also init with a flask page if supply a url.
+          // Initialise iframe content. 
+          // If 'initialUrl' supplied (typically a url on the flask server) then will load it.
+          // 
+          // Note: Render page index.html contains this iframe, and always remains present.
+          // You could make this index.html blank except for the iframe, and drive everything via flask pages.
           if (initialUrl) {
               let iframe = document.querySelector('iframe.flask-pages')
-              iframe.contentWindow.location.assign(initialUrl)
-              return
+              let success = false
+
+              $.ajax({
+                method: "GET",
+                url: initialUrl,
+                data: {},
+                success: response => {
+                  iframe.contentWindow.location.assign(initialUrl)
+                  success = true
+                },
+                error: response => {
+                  alert(`Could not contact flask server at ${initialUrl}`)
+                }
+              });
+
+              if (success)
+                return
           }
 
+          // Otherwise load diagnostic html page into iframe
           let output_html = `
             <ul>
               <p>The following will take you to flask rendered pages!</p>

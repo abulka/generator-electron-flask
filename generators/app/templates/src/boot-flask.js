@@ -23,7 +23,7 @@ const guessPackaged = () => {
 log.info('pythonExePath', pythonExePath, 'packaged mode?', guessPackaged())
 
 let numAttempts = 0
-const maxAttemptsAllowed = 3
+const maxAttemptsAllowed = 6
 function checkFlask(cb) {  // cb is the function which will load the main window content etc.
     request('http://localhost:<%= portFlask %>/', { json: true }, (err, res, body) => {
         // if (numAttempts < maxAttemptsAllowed) err = 'no flask'  // uncomment to simulate slow flask startup
@@ -39,7 +39,7 @@ function checkFlask(cb) {  // cb is the function which will load the main window
             else
                 setTimeout(function () {
                     checkFlask(cb)
-                }, 1000);
+                }, 500);
         }
         else if (res.statusCode != 200) {
             console.log(`Wrong response code from flask server ${res.statusCode} ${body} ⁉️⁉️⁉️ ⚠️`)
