@@ -3,31 +3,38 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>Hello World!</title>
+  <title>src/index.html</title>
   <link rel="stylesheet" href="index.css">
 
-  <% if (demoVueMain) { %>
+  <!-- You must include jQuery before Fomantic -->
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
 
-    <!-- You MUST include jQuery before Fomantic -->
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+  <!-- Fomantic UI components -->
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.8.7/dist/semantic.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/fomantic-ui@2.8.7/dist/semantic.min.js"></script>
 
-    <!-- Fomantic -->
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.8.7/dist/semantic.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/fomantic-ui@2.8.7/dist/semantic.min.js"></script>
-
-    <!-- Vue -->
-    <script src="https://unpkg.com/vue@next"></script>
-
-    <% } %>
+  <!-- Vue -->
+  <script src="https://unpkg.com/vue@next"></script>
 
 </head>
 
-  <body <% if (demoVueMain) { %>background="cyan"<% } %>>
-    <p style="background-color: aquamarine;">This is the electron render process html - you can make this empty</p>
-    <h1>💖 Hello World!</h1>
-    <p>Welcome to your Electron application.</p>
+<body>
 
-    <% if (demoVueMain) { %>
+  <p style="margin-bottom: 0;">This is <code>src/index.html</code> aka. the electron render process HTML. You can make
+    this HTML empty, allowing the iframe for flask pages to expand to fill the window.
+    Flask pages are rendered by the flask server.</p>
+
+  <div class="ui accordion">
+    <div class="title">
+      <i class="dropdown icon"></i>
+      Diagnostics
+    </div>
+    <div class="content">
+
+      <h1>💖 Hello World!</h1>
+      <p>Welcome to your Electron application.
+        These <code>src/index.html</code> buttons check if we can talk to the flask server.</p>
+
       <div id="electron-index-vue" class="demo">
         Message is: {{ message }}
 
@@ -48,77 +55,78 @@
 
       </div>
 
-      <!-- iframe for flask pages-->
-      <br>
-      <p style="background-color: aquamarine;">This is the iframe where flask pages should be loaded</p>
-      <iframe id="iframeout" class="flask-pages" style="height: 100%; width: 100%" srcdoc="">
-        <p>Your browser does not support iframes.</p>
-      </iframe>
+    </div>
+  </div>
 
-      <script>
-        const IndexVueApp = {
-          data() {
-            return {
-              message: 'Hello Vue!!'
-            }
-          },
-          methods: {
-            getInfo() {
-              $.ajax({
-                method: "GET",
-                url: `http://localhost:<%= portFlask %>`,
-                data: {},
-                // contentType: "application/json",
-                success: response => {
-                  this.message = response
-                }
-              });
-            },
-            sendEventToIframe() {
-              let event = new CustomEvent('eventFromRenderProcess', { detail: { foo: 'bar2' } })
-              document.querySelector('iframe.flask-pages').contentDocument.dispatchEvent(event)
-            },
-            doBootIframe() {
-                bootIframe('http://localhost:5000/<%= initialUrlFlask %>')  // init with a flask page
-            },
-            doBootIframeDebug() {  // init iframe with hand crafted html - for debugging
-                bootIframe()
-            }
-          },
+
+  <iframe id="iframeout" class="flask-pages" style="height: 100%; width: 100%" srcdoc="">
+    <p>Your browser does not support iframes.</p>
+  </iframe>
+
+  <script>
+    const IndexVueApp = {
+      data() {
+        return {
+          message: 'Hello Vue!!'
         }
+      },
+      methods: {
+        getInfo() {
+          $.ajax({
+            method: "GET",
+            url: `http://localhost:<%= portFlask %>`,
+            data: {},
+            // contentType: "application/json",
+            success: response => {
+              this.message = response
+            }
+          });
+        },
+        sendEventToIframe() {
+          let event = new CustomEvent('eventFromRenderProcess', { detail: { foo: 'bar2' } })
+          document.querySelector('iframe.flask-pages').contentDocument.dispatchEvent(event)
+        },
+        doBootIframe() {
+          bootIframe('http://localhost:5000/<%= initialUrlFlask %>')  // init with a flask page
+        },
+        doBootIframeDebug() {  // init iframe with hand crafted html - for debugging
+          bootIframe()
+        }
+      },
+    }
 
-        Vue.createApp(IndexVueApp).mount('#electron-index-vue')
+    Vue.createApp(IndexVueApp).mount('#electron-index-vue')
 
 
-        function bootIframe(initialUrl=undefined) {
-          // Initialise iframe content. 
-          // If 'initialUrl' supplied (typically a url on the flask server) then will load it.
-          // 
-          // Note: Render page index.html contains this iframe, and always remains present.
-          // You could make this index.html blank except for the iframe, and drive everything via flask pages.
-          if (initialUrl) {
-              let iframe = document.querySelector('iframe.flask-pages')
-              let success = false
+    function bootIframe(initialUrl = undefined) {
+      // Initialise iframe content. 
+      // If 'initialUrl' supplied (typically a url on the flask server) then will load it.
+      // 
+      // Note: Render page index.html contains this iframe, and always remains present.
+      // You could make this index.html blank except for the iframe, and drive everything via flask pages.
+      if (initialUrl) {
+        let iframe = document.querySelector('iframe.flask-pages')
+        let success = false
 
-              $.ajax({
-                method: "GET",
-                url: initialUrl,
-                data: {},
-                success: response => {
-                  iframe.contentWindow.location.assign(initialUrl)
-                  success = true
-                },
-                error: response => {
-                  alert(`Could not contact flask server at ${initialUrl}`)
-                }
-              });
-
-              if (success)
-                return
+        $.ajax({
+          method: "GET",
+          url: initialUrl,
+          data: {},
+          success: response => {
+            iframe.contentWindow.location.assign(initialUrl)
+            success = true
+          },
+          error: response => {
+            alert(`Could not contact flask server at ${initialUrl}`)
           }
+        });
 
-          // Otherwise load diagnostic html page into iframe
-          let output_html = `
+        if (success)
+          return
+      }
+
+      // Otherwise load diagnostic html page into iframe
+      let output_html = `
             <ul>
               <p>The following will take you to flask rendered pages!</p>
               <li><a href="http://localhost:5000/hello">hello</a></li>
@@ -130,12 +138,12 @@
               <li><a href="javascript:window.top.document.dispatchEvent(new CustomEvent('eventFromIframePage', { detail: { foo: 'bar' } }));">Send event to window.top</a></li>
             </ul>
             `
-          let iframe = document.querySelector('iframe.flask-pages')
-          iframe.srcdoc = output_html
+      let iframe = document.querySelector('iframe.flask-pages')
+      iframe.srcdoc = output_html
 
-          // Initialise iframe, append some script - but interesting, this stays around even when navigate away!
-          iframe.onload = function () {
-            const src = `
+      // Initialise iframe, append some script - but interesting, this stays around even when navigate away!
+      iframe.onload = function () {
+        const src = `
                 // Example of listening for events from render process html - any flask page should also add this kind of code
                 window.document.addEventListener('eventFromRenderProcess', handleEvent, false)
                 function handleEvent(e) {
@@ -145,30 +153,31 @@
 
                 console.log('iframe BOOT page loaded ok')
             `
-            const script = iframe.contentWindow.document.createElement("script");
-            script.type = "text/javascript";
-            script.innerHTML = src  // script.src = src; doesn't work
-            iframe.contentWindow.document.body.appendChild(script);
+        const script = iframe.contentWindow.document.createElement("script");
+        script.type = "text/javascript";
+        script.innerHTML = src  // script.src = src; doesn't work
+        iframe.contentWindow.document.body.appendChild(script);
 
-          }
-        }
-        // bootIframe()  // init with a custom hand coded page
-        bootIframe('http://localhost:5000/<%= initialUrlFlask %>')  // init with a flask page
-
-
-        // In electron render process html, listen for possible custom events from iframe pages
-        // You could in turn talk to the electron main process from here, thus offering a way for
-        // flask pages to talk to both the render process and the main process.
-        window.document.addEventListener('eventFromIframePage', handleEvent, false)
-        function handleEvent(e) {
-          console.log(e.detail)
-          alert('electron render process html received event from iframe page.')
-        }
-
-      </script>
-      <% } %>
+      }
+    }
+    // bootIframe()  // init with a custom hand coded page
+    bootIframe('http://localhost:5000/<%= initialUrlFlask %>')  // init with a flask page
 
 
-  </body>
+    // In electron render process html, listen for possible custom events from iframe pages
+    // You could in turn talk to the electron main process from here, thus offering a way for
+    // flask pages to talk to both the render process and the main process.
+    window.document.addEventListener('eventFromIframePage', handleEvent, false)
+    function handleEvent(e) {
+      console.log(e.detail)
+      alert('electron render process html received event from iframe page.')
+    }
+
+    // fomantic bootstrap
+    $('.ui.accordion:first').accordion('close', 0)  // actually don't need to close since no 'active' attr
+     
+  </script>
+
+</body>
 
 </html>

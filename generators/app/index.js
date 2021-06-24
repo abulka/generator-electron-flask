@@ -108,13 +108,9 @@ module.exports = class extends Generator {
           {
             name: "Open Electron/Chrome DevTools in final app",
             value: "openDevTools"
-          },
-          {
-            name: "Demo button on main page calling Flask endpoint",
-            value: "demoVueMain"
           }
         ],
-        default: ["electronLog", "macFullyQuit", "openDevTools", "demoVueMain"]
+        default: ["electronLog", "macFullyQuit", "openDevTools"]
       }
     ];
 
@@ -179,7 +175,6 @@ module.exports = class extends Generator {
       electronLog: this.props.misc.includes("electronLog"),
       reportVersions: this.props.misc.includes("reportVersions"),
       reportCwd: this.props.misc.includes("reportCwd"),
-      demoVueMain: this.props.misc.includes("demoVueMain"),
       macFullyQuit: this.props.misc.includes("macFullyQuit"),
       openDevTools: this.props.misc.includes("openDevTools")
     };
