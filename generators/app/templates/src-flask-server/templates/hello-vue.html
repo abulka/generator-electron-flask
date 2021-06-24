@@ -7,20 +7,12 @@
 
     <title>Hello</title>
 
-    <!-- You MUST include jQuery before Fomantic -->
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
-
-    <!-- Fomantic -->
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.8.7/dist/semantic.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/fomantic-ui@2.8.7/dist/semantic.min.js"></script>
-
-    <!-- Vue -->
-    <script src="https://unpkg.com/vue@next"></script>
+    {% include 'partials/cdn-scripts.html' %}
 
 </head>
 
 <body>
-    <h1>hello-vue</h1>
+    <h1>Hello-vue from flask</h1>
 
     <p>hi there {{msg}}</p>
 
