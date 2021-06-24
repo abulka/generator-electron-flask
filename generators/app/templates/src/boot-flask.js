@@ -31,22 +31,28 @@ function checkFlask(cb) {  // cb is the function which will load the main window
             if (numAttempts > 1)  // only warn after one retry, cos will usually need one retry anyway
                 console.log(`Could not communicate with flask server ${err} 🤔 - its probably still starting up, waiting...`)
             numAttempts++
-            if (numAttempts > maxAttemptsAllowed)
+            if (numAttempts > maxAttemptsAllowed) {
                 console.log(`Could not communicate with flask server ${err} 🆘 - gave up.`)
+                // Call the callback even in the case of failure, so that always have something loaded in mainwindow render page
+                if (cb)
+                    cb()            }
             else
                 setTimeout(function () {
                     checkFlask(cb)
                 }, 1000);
         }
-        else if (res.statusCode != 200)
+        else if (res.statusCode != 200) {
             console.log(`Wrong response code from flask server ${res.statusCode} ${body} ⁉️⁉️⁉️ ⚠️`)
+            if (cb)
+                cb()
+        }
         else {
             console.log('Communication with flask server is OK 🎉')
+            // Call the callback even in the case of failure, so that always have something loaded in mainwindow render page
+            if (cb)
+                cb()
         }
 
-        // Always call the callback, so that always have something loaded in mainwindow render page
-        if (cb)
-            cb()
     });
 }
 

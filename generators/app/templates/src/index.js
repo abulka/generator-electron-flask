@@ -56,21 +56,23 @@ const createWindow = () => {
       webSecurity: false
     }
   });
+
+  // Load the initial page of the app. 
+  // Normally electron loads 'index.html' but we load 'boot-flask.html' till flask server starts, then load 'index.html'
+  _mainWindow.loadFile(path.join(__dirname, 'boot-flask.html'));
+  
+  <% if (openDevTools) { %>
+  // Open the DevTools.
+  _mainWindow.webContents.openDevTools();
+  <% } %>
+  
+  // let boot flask logic know about mainWindow to assist with proper quit
+  setMainWindow(_mainWindow) 
   
   function cb_post_flask() {
     // Once flask is running, load the main window content, which usually loads a flask page,
     // which is why we need to wait for flask to be running.
-    
-    // load the index.html of the app.
     _mainWindow.loadFile(path.join(__dirname, 'index.html'));
-
-    <% if (openDevTools) { %>
-    // Open the DevTools.
-    _mainWindow.webContents.openDevTools();
-    <% } %>
-
-    // let boot flask logic know about mainWindow to assist with proper quit
-    setMainWindow(_mainWindow) 
   }
 
 };
