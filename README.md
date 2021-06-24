@@ -31,6 +31,8 @@ yo electron-flask
 
     npm update generator-electron-flask -g
 
+Please check regularly as this generator is being updated regularly (June 2021).
+
 # Scripts in `./bin` inside your newly created project
 
 These are a collection of handy bash and .bat scripts for building and running both flask and electron, in your new project.
@@ -129,9 +131,31 @@ For deployment, simply run the script `build` and the resulting app will appear 
 
 # Architecture
 
-Flask is spawned as a child process the the Electron app main process - see `src/index.js`.  For production, Flask is embedded inside the Electron app as an executable in its Resources directory.
+    ┌──────src/index.html─────────────────────────┐    ┌──────src/index.js───────────────────────────┐
+    │                                             │    │                                             │
+    │  electron render process html - always here │    │  main electron process javascript           │
+    │                                             │    │                                             │
+    │  (you can make this html content blank      │    │  (contains code to spawn flask server       │
+    │   so that the iframe dominates              │    │   on startup, and kill flask server         │
+    │   except the iframe should always be here)  │    │   on quit.)                                 │
+    │                                             │    └───┬─────────────────────────────────────────┘
+    │ ┌──────iframe────────────────────────────┐  │        ▼                                          
+    │ │                                        │  │    ┌──────src-flask-server/app.py────┐            
+    │ │  initial flask page displayed here     │  │───▶│                                 │            
+    │ │  e.g. /hello                           │  │    │  flask server                   │            
+    │ │                                        │──┼───▶│                                 │            
+    │ │  all subsequent page navigation happens│◀─┼────│  /hello                         │            
+    │ │  inside this iframe.                   │  │    │  /hello-vue                     │            
+    │ │                                        │  │    │  /etc                           │            
+    │ └────────────────────────────────────────┘  │    │                                 │            
+    └─────────────────────────────────────────────┘    └─────────────────────────────────┘            
 
-The Flask executable is created by Pyinstaller. When the executable runs, the tempates and static dirs, plus the python runtime are unzipped into a temporary directory, then run.
+Flask is spawned as a child process the the Electron app main process - see `src/index.js`.  
+
+Anyone can talk to the flask server - it's just an endpoint:
+- the javascript of the main electron process `src/index.js`
+- the javascript of the electron render process in `src/index.html` 
+- any other flask html page
 
 ## File structure generated
 
@@ -173,6 +197,12 @@ local js and python libraries and runtimes, to ignore
     node_modules
     venv
 
+## For production
+
+The Flask executable is created by Pyinstaller. The `template` and `static` dirs, plus the python runtime are embedded in the executable. When the executable runs, all these files are unzipped into a temporary directory, then run.
+
+When you `make` the final Electron executable app, the Flask executable is embedded inside the Electron app in its Resources directory.
+
 ## Page navigation
 
 Links to flask rendered pages in the renderer process html e.g. if
@@ -204,6 +234,20 @@ And of course all of the following can communicate with the flask server:
 Note that Electron restarts the renderer process when a new URL is loaded, so you'll probably see a flash when that happens. This is why it's usually best to use a single page application (SPA) architecture when building Electron apps.  https://stackoverflow.com/questions/39880979/electron-how-to-load-a-html-file-into-the-current-window
 
 Note that the iframe based solution is a kind of combination SPA (in the sense that the renderer process html stays around and is the `S` in SPA) and has the multiple flask pages _via the iframe_.
+
+### Initial flask page
+
+The initial page displayed in the iframe comes from the flask server and the url is prompted for when running this generator.
+
+For example, if you want the initial page to be `/hello` then type in `hello` when prompted. Ensure you have a flask server endpoint that responds to this route.  E.g. in `src-flask-server/app.py` ensure you have something like:
+
+```python
+@app.route('/hello')
+def hello():
+    return render_template('hello.html', msg="YOU")
+```
+
+> Note: the above route is auto created by the project.
 
 # Debugging your generated project
 
