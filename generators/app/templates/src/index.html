@@ -39,7 +39,10 @@
             sendEventToIframe
           </button>
           <button class="ui button blue" v-on:click="doBootIframe">
-            Re-initialise iframe html
+            Re-initialise iframe html with flask page
+          </button>
+          <button class="ui button cyan" v-on:click="doBootIframeDebug">
+            Re-initialise iframe html debug
           </button>
         </div>
 
@@ -76,7 +79,10 @@
               document.querySelector('iframe.flask-pages').contentDocument.dispatchEvent(event)
             },
             doBootIframe() {
-              bootIframe()
+                bootIframe('http://localhost:5000/hello')  // init with a flask page
+            },
+            doBootIframeDebug() {  // init iframe with hand crafted html - for debugging
+                bootIframe()
             }
           },
         }

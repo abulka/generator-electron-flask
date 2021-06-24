@@ -42,7 +42,7 @@ const createWindow = () => {
   else {
     runFlask()
   }
-  checkFlask()
+  checkFlask(cb_post_flask)
 
   // Create the browser window.
   const _mainWindow = new BrowserWindow({
@@ -56,16 +56,23 @@ const createWindow = () => {
       webSecurity: false
     }
   });
+  
+  function cb_post_flask() {
+    // Once flask is running, load the main window content, which usually loads a flask page,
+    // which is why we need to wait for flask to be running.
+    
+    // load the index.html of the app.
+    _mainWindow.loadFile(path.join(__dirname, 'index.html'));
 
-  // and load the index.html of the app.
-  _mainWindow.loadFile(path.join(__dirname, 'index.html'));
+    <% if (openDevTools) { %>
+    // Open the DevTools.
+    _mainWindow.webContents.openDevTools();
+    <% } %>
 
-  <% if (openDevTools) { %>
-  // Open the DevTools.
-  _mainWindow.webContents.openDevTools();
-  <% } %>
+    // let boot flask logic know about mainWindow to assist with proper quit
+    setMainWindow(_mainWindow) 
+  }
 
-  setMainWindow(_mainWindow) 
 };
 
 // Disable iframe navigation blocked warnings, possibly there is a better solution.
