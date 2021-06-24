@@ -6,7 +6,7 @@ export let xx = 100;
 export const HelloVueApp = {
     data() {
         return {
-            message: 'Hello Vue!!',
+            message: '',
         }
     },
     methods: {
@@ -20,19 +20,7 @@ export const HelloVueApp = {
                     this.message = response
                 }
             });
-        },
-        // getInfo2() {
-        //     $.ajax({
-        //         method: "POST",
-        //         url: `http://localhost:<%= portFlask %>/info2`,
-        //         data: { debug1: this.debug1 },
-        //         // contentType: "application/json",
-        //         success: response => {
-        //             let iframe = document.querySelector('#iframe22')
-        //             iframe.srcdoc = `<pre>${response}</pre>`
-        //         }
-        //     });
-        // }
+        }
     },
     delimiters: ["${", "}"]
 }

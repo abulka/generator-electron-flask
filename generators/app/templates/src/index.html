@@ -31,27 +31,41 @@
     </div>
     <div class="content">
 
-      <h1>💖 Hello World!</h1>
-      <p>Welcome to your Electron application.
-        These <code>src/index.html</code> buttons check if we can talk to the flask server.</p>
-
       <div id="electron-index-vue" class="demo">
-        Message is: {{ message }}
 
-        <div class="inline field">
-          <button class="ui button green" v-on:click="getInfo">
-            getInfo
-          </button>
-          <button class="ui button yellow" v-on:click="sendEventToIframe">
-            sendEventToIframe
-          </button>
-          <button class="ui button blue" v-on:click="doBootIframe">
-            Re-initialise iframe html with flask page
-          </button>
-          <button class="ui button cyan" v-on:click="doBootIframeDebug">
-            Re-initialise iframe html debug
-          </button>
+        <div class="ui raised padded text container segment">
+          <p>See if we can talk to the flask server:</p>
+          <div class="inline field">
+              <button class="ui button green" v-on:click="getInfo">
+                  GET
+              </button>
+              JSON response: {{ message }}
+
+          </div>
         </div>
+        
+        <div class="ui raised padded text container segment">
+          <p>Sending custom event <i>to</i> iframe. First load <i>diagnostic HTML</i> or <i>/hello-vue</i> into iframe.</p>
+          <div class="inline field">
+            <button class="ui button yellow" v-on:click="sendEventToIframe">
+              Send
+            </button>
+          </div>
+        </div>
+
+        <div class="ui raised padded text container segment">
+          <p>Load content into iframe</p>
+          <div class="inline field">
+            <button class="ui button blue" v-on:click="doBootIframe">
+              Load default flask page
+            </button>
+            <button class="ui button cyan" v-on:click="doBootIframeDebug">
+              Load diagnostic HTML
+            </button>
+          </div>
+        </div>
+
+        <br>
 
       </div>
 
@@ -67,7 +81,7 @@
     const IndexVueApp = {
       data() {
         return {
-          message: 'Hello Vue!!'
+          message: ''
         }
       },
       methods: {
