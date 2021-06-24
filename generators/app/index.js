@@ -83,6 +83,11 @@ module.exports = class extends Generator {
         default: 5000
       },
       {
+        name: "initialUrlFlask",
+        message: "Initial flask url (e.g. /hello or /hello-vue) to display? /",
+        default: "hello"
+      },
+      {
         type: "checkbox",
         name: "misc",
         message: "Choose from misc options",
@@ -170,6 +175,7 @@ module.exports = class extends Generator {
       license: this.props.license,
       keywords: this.props.keywords,
       portFlask: this.props.portFlask,
+      initialUrlFlask: this.props.initialUrlFlask,
       electronLog: this.props.misc.includes("electronLog"),
       reportVersions: this.props.misc.includes("reportVersions"),
       reportCwd: this.props.misc.includes("reportCwd"),
