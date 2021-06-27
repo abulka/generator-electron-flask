@@ -54,6 +54,15 @@
         </div>
 
         <div class="ui raised padded text container segment">
+          <p>Communicating with Electron using events.</p>
+          <div class="inline field">
+            <button class="ui button brown" v-on:click="sendEventToMainProcess">
+              Render Process → Main Process (synchronous)
+            </button>
+          </div>
+        </div>
+
+        <div class="ui raised padded text container segment">
           <p>Load content into iframe</p>
           <div class="inline field">
             <button class="ui button blue" v-on:click="doBootIframe">
@@ -103,6 +112,10 @@
         doBootIframe() {
           bootIframe('http://localhost:5000/<%= initialUrlFlask %>')  // init with a flask page
         },
+        sendEventToMainProcess() {
+          // Synchronous message emmiter and handler
+          console.log(window.ipcRenderer.sendSync('synchronous-message', 'sync ping')) 
+        },        
         doBootIframeDebug() {  // init iframe with hand crafted html - for debugging
           bootIframe()
         }

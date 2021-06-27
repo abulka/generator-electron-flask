@@ -57,7 +57,7 @@ Use Command Prompt terminal (not powershell) to run these scripts.
 
 Add `bin` to your 'Environment Variables / User variables for USER / Path' using the built in editor, which you can find by typing 'path' into the windows search bar and selecting 'Edit the system environment variables' menu item.
 
-> Ensure you close all running terminals and shells and open a fresh terminal. In 'Command Prompt' shell type `PATH` and ensure the relative path to bin has been added ok e.g. Notice the last entry below:
+Then ensure you close all running terminals and shells and open a fresh terminal. In 'Command Prompt' shell type `PATH` and check to ensure the relative path to `bin` has been added ok e.g. Look for the entry below:
 
     ...;bin;
 
@@ -168,12 +168,12 @@ root files
 
 source code dirs
 
-    src
+    src   <------ Javascript Electron App
     ├── index.css
     ├── index.html
     └── index.js
 
-    src-flask-server/
+    src-flask-server/     <------ PYTHON flask server
     ├── app.py
     ├── static
     │   ├── css
@@ -186,13 +186,13 @@ source code dirs
         └── hello.html
         └── hello-vue.html
 
-build dirs
+build dirs:
 
     build
     dist
     out
 
-local js and python libraries and runtimes, to ignore
+local js and python libraries and runtimes, to ignore:
 
     node_modules
     venv
@@ -248,6 +248,58 @@ def hello():
 ```
 
 > Note: the above route is auto created by the project.
+
+# Events
+
+You can communicate between
+- a flask page
+- the electron render process html page 
+- the electron main process
+
+## Flask -> Render -> Main
+
+The way to communicate between electron processes is documented by the [Electron documentation](https://www.electronjs.org/docs/api/ipc-main) and tutorials like [this](https://www.tutorialspoint.com/electron/electron_inter_process_communication.htm).
+
+The only trick that electron-flask needs to achieve is to communicate from the flask page living in the iframe to the parent render process page.
+
+We can simply send a custom event from the flask html like this:
+
+```html
+    <li><a href="javascript:window.parent.document.dispatchEvent(new CustomEvent('eventFromIframePage', { detail: { foo: 'bar' } }));">Send custom event to window.parent (render process)</a></li>
+```
+
+and receive it in the render process like this:
+
+```javascript
+// Example of listening for events from render process html
+window.document.addEventListener('eventFromRenderProcess', handleEvent, false)
+function handleEvent(e) {
+    console.log(e.detail)
+    alert('iframe FLASK page received event from electron render process')
+}
+```
+
+> The demo page `/hello-vue`, in the generated project, demonstrates this communication.
+
+Once you can reach the render process, you can then contact the main process using the official Electron inter-process techniques.
+
+## Main -> Flask
+
+Intercepting events from the main process is important because e.g. native Electron menu items trigger events in the main process.
+
+We should use standard Electron inter-process communication techniques to send a message from the main -> render process, if we need to.
+
+There are various scenarious:
+- The Electron main process javascript calls a flask endpoint using ajax and receives a result, which can then be relayed to the render process.
+- The Electron render process javascript calls a flask endpoint.
+- The Electron render process javascript can load any flask page into the iframe. It can also load in any arbitrary html into the iframe.
+- The flask page can call a flask endpoint using ajax and update its own DOM if necessary.
+
+### Example 1
+
+A challenging and interesting scenario might be - an electron menu item which causes the state of a flask page to change.
+
+TODO
 
 # Debugging your generated project
 

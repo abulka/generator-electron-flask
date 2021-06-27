@@ -1,4 +1,5 @@
 const { app, BrowserWindow } = require('electron');
+const {ipcMain} = require('electron')
 const path = require('path');
 const { setMainWindow, getMainWindow, closeMainWindow } = require('./boot-flask.js');
 const { runFlask, checkFlask, killFlask } = require('./boot-flask.js');
@@ -44,7 +45,7 @@ const createWindow = () => {
   }
   checkFlask(cb_post_flask)  // wait for flask server, then create window and load initial 'src/index.html'
 
-   function cb_post_flask() {
+    function cb_post_flask() {
     // Once flask is running, load the main window content, which usually loads a flask page,
     // which is why we need to wait for flask to be running.
 
@@ -53,12 +54,30 @@ const createWindow = () => {
       width: 1000,
       height: 800,
 
-      // Turn off to allow events from iframe flask pages to get into render process html
-      // there may be other solutions e.g. https://stackoverflow.com/questions/25098021/securityerror-blocked-a-frame-with-origin-from-accessing-a-cross-origin-frame
-      // whereby this can be kept true.
       webPreferences: {
-        webSecurity: false
+
+        // Turn off webSecurity to allow events from iframe flask pages to get into render process html
+        // there may be other solutions e.g. https://stackoverflow.com/questions/25098021/securityerror-blocked-a-frame-with-origin-from-accessing-a-cross-origin-frame
+        // whereby this can be kept true.
+        webSecurity: false,
+  
+        // Allow electron render process (which is the browser window
+        // src/index.html & javascript launched by the main process src/index.js)
+        // to communicate with the electron main process (which is src/index.js).
+        // The solution of turning on HTMLnodeIntegration: true, is a security
+        // risk, and also breaks the ability to use <script> tags in
+        // src/index.html - the correct solution is to use this preload trick
+        // https://stackoverflow.com/questions/54544519/electron-require-is-not-defined
+        // This solution needs contextIsolation: false so that window.ipcRenderer
+        // and any other propery of 'window' that you create in preload.js sticks
+        // and properly exists in the render process's 'window'. If you want to keep
+        // contextIsolation: true then you'll need to use a more complex
+        // window.postMessage variant of this solution - see above stackoverflow
+        // url.
+        contextIsolation: false,
+        preload: `${__dirname}/preload.js`
       }
+
     });
 
     // Load the initial page of the app. 
@@ -108,6 +127,16 @@ app.on('activate', () => {
     createWindow();
   }
 });
+
+// Event Communication
+
+// Event handler for synchronous incoming messages
+ipcMain.on('synchronous-message', (event, arg) => {
+  console.log(arg) 
+
+  // Synchronous event emmision
+  event.returnValue = 'sync pong'
+})
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.

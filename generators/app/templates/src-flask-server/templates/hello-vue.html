@@ -35,10 +35,12 @@
 
         <p>Communication <i>from</i> iframe FLASK pages <i>to</i> parent electron render process HTML.</p>
         <ul>
-            <li><a href="javascript:window.parent.document.dispatchEvent(new CustomEvent('eventFromIframePage', { detail: { foo: 'bar' } }));">Send event to window.parent</a></li>
-            <li><a href="javascript:window.top.document.dispatchEvent(new CustomEvent('eventFromIframePage', { detail: { foo: 'bar' } }));">Send event to window.top</a></li>
+            <li><a href="javascript:window.parent.document.dispatchEvent(new CustomEvent('eventFromIframePage', { detail: { foo: 'bar' } }));">Send custom event to window.parent (render process)</a></li>
+            <li><a href="javascript:window.top.document.dispatchEvent(new CustomEvent('eventFromIframePage', { detail: { foo: 'bar' } }));">Send custom event to window.top (render process)</a></li>
+            <li>Send custom event to electron main process via render process window.parent (TODO)</a></li>
         </ul>
 
+        <p>Navigate to another flask rendered page.</p>
         <a href="/hello">/hello</a>
 
     </div>
