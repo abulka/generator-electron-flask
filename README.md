@@ -265,17 +265,19 @@ The only trick that electron-flask needs to achieve is to communicate from the f
 We can simply send a custom event from the flask html like this:
 
 ```html
-    <li><a href="javascript:window.parent.document.dispatchEvent(new CustomEvent('eventFromIframePage', { detail: { foo: 'bar' } }));">Send custom event to window.parent (render process)</a></li>
+<li><a href="javascript:window.parent.document.dispatchEvent(new CustomEvent('eventFromIframePage', { detail: { foo: 'bar' } }));">Send custom event to window.parent (render process)</a></li>
 ```
 
 and receive it in the render process like this:
 
 ```javascript
-// Example of listening for events from render process html
-window.document.addEventListener('eventFromRenderProcess', handleEvent, false)
+// In electron render process html, listen for possible custom events from iframe pages
+// You could in turn talk to the electron main process from here, thus offering a way for
+// flask pages to talk to both the render process and the main process.
+window.document.addEventListener('eventFromIframePage', handleEvent, false)
 function handleEvent(e) {
     console.log(e.detail)
-    alert('iframe FLASK page received event from electron render process')
+    alert('electron render process html received event from iframe page.')
 }
 ```
 
@@ -299,7 +301,29 @@ There are various scenarious:
 
 A challenging and interesting scenario might be - an electron menu item which causes the state of a flask page to change.
 
-TODO
+Simply send an event `main -> render`, then from the render process send a custom event to the iframe like this:
+
+```javascript
+let event = new CustomEvent('eventFromRenderProcess', { detail: { foo: 'bar2' } })
+document.querySelector('iframe.flask-pages').contentDocument.dispatchEvent(event)
+```
+
+and receive it in the flask javascript like this
+
+```javascript
+// Example of listening for events from render process html
+window.document.addEventListener('eventFromRenderProcess', handleEvent, false)
+function handleEvent(e) {
+    console.log(e.detail)
+    alert('iframe FLASK page received event from electron render process')
+}
+```
+
+## Flask server -> Electron?
+
+Whilst anyone (electron render process, electron main process, flask rendered page) can talk to the flask server just by calling an endpoint, can the flask server talk to any of these electron processes? 
+
+No, it can only reply to incoming requests - unless perhaps you set up a socket or other such two way mechanism - yet to be explored. Its probably out of scope of this project since its just regular client server programming - the world is your oyster in terms of what you want to do.
 
 # Debugging your generated project
 
