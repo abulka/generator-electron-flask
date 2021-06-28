@@ -16,44 +16,46 @@
   <!-- Vue -->
   <script src="https://unpkg.com/vue@next"></script>
 
+  <style>
+    #electron-index-vue .accordion .content {
+      padding-left: 1em;
+      padding-right: 1em;
+    }
+    .info {
+      padding-left: 1em;
+    }
+    .slim-bottom {
+      margin-bottom: 0;
+    }
+  </style>
+
 </head>
 
 <body>
 
-  <p style="margin-bottom: 0;">This is <code>src/index.html</code> aka. the electron render process HTML. You can make
-    this HTML empty, allowing the iframe for flask pages to expand to fill the window.
-    Flask pages are rendered by the flask server.</p>
+  <p class="info">This is the electron render process HTML <code>src/index.html</code>.</p>
+  <p class="info">You can make this HTML empty, allowing the iframe containing your flask pages to expand to fill this window.
+    Flask pages are rendered by the built in flask server.</p>
 
-  <div class="ui accordion">
-    <div class="title">
-      <i class="dropdown icon"></i>
-      Diagnostics
-    </div>
+  <div class="ui accordion" id="electron-index-vue">
+    <div class="title"> <i class="dropdown icon"></i> Diagnostics </div>
     <div class="content">
+      <p class="info">Here are some diagnostics from the point of view of the electron render process.</p>
+      <div class="ui styled accordion">
 
-      <div id="electron-index-vue" class="demo">
-
-        <div class="ui raised padded text container segment">
+        <div class="title"> <i class="dropdown icon"></i> Talking to the flask server </div>
+        <div class="content">
           <p>See if we can talk to the flask server:</p>
           <div class="inline field">
-              <button class="ui button green" v-on:click="getInfo">
-                  GET
-              </button>
-              JSON response: {{ message }}
-
-          </div>
-        </div>
-        
-        <div class="ui raised padded text container segment">
-          <p>Sending custom event <i>to</i> iframe. First load <i>diagnostic HTML</i> or <i>/hello-vue</i> into iframe.</p>
-          <div class="inline field">
-            <button class="ui button yellow" v-on:click="sendEventToIframe">
-              Send
+            <button class="ui button green" v-on:click="getInfo">
+              GET
             </button>
+            JSON response: {{ message }}
           </div>
         </div>
 
-        <div class="ui raised padded text container segment">
+        <div class="title"> <i class="dropdown icon"></i> Talking to main process. </div>
+        <div class="content">
           <p>Communicating with Electron using events.</p>
           <div class="inline field">
             <button class="ui button brown" v-on:click="sendEventToMainProcess">
@@ -62,7 +64,19 @@
           </div>
         </div>
 
-        <div class="ui raised padded text container segment">
+        <div class="title"> <i class="dropdown icon"></i> Talking to iframe. </div>
+        <div class="content">
+          <p>Sending a custom event to the iframe below, where flask pages are loaded into. </p>
+          <p>For best results, first load <i>diagnostic HTML</i> or <i>/hello-vue</i> into the iframe.</p>
+          <div class="inline field">
+            <button class="ui button yellow" v-on:click="sendEventToIframe">
+              Send
+            </button>
+          </div>
+        </div>
+
+        <div class="title"> <i class="dropdown icon"></i> Load iframe with... </div>
+        <div class="content">
           <p>Load content into iframe</p>
           <div class="inline field">
             <button class="ui button blue" v-on:click="doBootIframe">
@@ -72,15 +86,12 @@
               Load diagnostic HTML
             </button>
           </div>
+          <br>
         </div>
 
-        <br>
-
-      </div>
-
-    </div>
-  </div>
-
+      </div> <!-- accordion -->
+    </div> <!-- content -->
+  </div> <!-- outer accordion -->
 
   <iframe id="iframeout" class="flask-pages" style="height: 100%; width: 100%" srcdoc="">
     <p>Your browser does not support iframes.</p>
@@ -115,7 +126,7 @@
         sendEventToMainProcess() {
           // Synchronous message emmiter and handler
           console.log(window.ipcRenderer.sendSync('synchronous-message', 'sync ping')) 
-        },        
+        },
         doBootIframeDebug() {  // init iframe with hand crafted html - for debugging
           bootIframe()
         }
