@@ -9,26 +9,33 @@
 
     {% include 'partials/cdn-scripts.html' %}
 
+    <style>
+        #electron-index-vue .accordion .content {
+          padding-left: 1em;
+          padding-right: 1em;
+        }
+        .info {
+          padding-left: 1em;
+        }
+        .slim-bottom {
+          margin-bottom: 0;
+        }
+    </style>
+
 </head>
 
 <body style="padding: 0.5em">
-    <h1>💖 Hello-vue World - from flask</h1>
+    <h1>💖 Hello Vue - from flask</h1>
     <p>Welcome to your Electron application.
 
-    <p>hi there {{msg}}</p>
+    <!-- this entire page is rendered by flask templating -->
 
-    <div id="hello-vue" class="demo">
+    <p>This page has been rendered by flask, the 'msg' variable is: {{msg}}</p>
 
-        <div class="ui raised padded text container segment">
-            <p>Test of communication <i>from</i> main process <i>to</i> this flask page.</p> 
-            <p>Select main electron menu
-            'Flask Stuff / <b>Send Event to Flask Page</b>' or just <i>CmdOrCtrl+Shift+E</i>
-            </p>
-            <p>result: <code>${ messageFromMainProcess }</code>
-            </p>
-        </div>
+    <div class="ui accordion" id="hello-vue">
 
-        <div class="ui raised padded text container segment">
+        <div class="title"> <i class="dropdown icon"></i> Talk to the flask server</div>
+        <div class="content">
             <div class="inline field">
                 <button class="ui button green" v-on:click="getInfo">
                     GET
@@ -37,17 +44,39 @@
             </div>
         </div>
 
-        <p>Test of communication <i>from</i> iframe FLASK pages <i>to</i> parent electron render process HTML.</p>
-        <ul>
-            <li><a href="javascript:window.parent.document.dispatchEvent(new CustomEvent('eventFromIframePage', { detail: { foo: 'bar' } }));">Send custom event to window.parent (render process)</a></li>
-            <li><a href="javascript:window.top.document.dispatchEvent(new CustomEvent('eventFromIframePage', { detail: { foo: 'bar' } }));">Send custom event to window.top (render process)</a></li>
-            <li>Send custom event to electron main process via render process window.parent (TODO)</a></li>
-        </ul>
+        <div class="title"> <i class="dropdown icon"></i> Receive from Main Process </div>
+        <div class="content">
+            <p>This is a test of communication from the electron main process to this flask page.
+            It is accomplished in two steps: An event first travels to the render process, 
+            whereupon another event is sent to the iframe.</p>
+            <p><code>main process → render process</code></p> 
+            <p><code style="padding-left: 11em;">↓</code></p> 
+            <p><code style="padding-left: 10em;">iframe</code></p> 
+            <p><code style="padding-left: 9em;">(flask page HTML)</code></p> 
+            <p>Select 'Flask Stuff / Send Event to Flask Page' from the native app menu
+             Shortcut: <i>CmdOrCtrl+Shift+E</i>.
+             The event payload object is carried on both events, and
+             is visible in the result, below.
+            </p>
+            <p>Result: <code>${ messageFromMainProcess }</code>
+            </p>
+        </div>
 
-        <p>Navigate to another flask rendered page.</p>
-        <a href="/hello">/hello</a>
+        <div class="title"> <i class="dropdown icon"></i> Talk to Render Process</div>
+        <div class="content">
+            <p>Test of communication <i>from</i> iframe FLASK pages <i>to</i> parent electron render process HTML.</p>
+            <ul>
+                <li><a href="javascript:window.parent.document.dispatchEvent(new CustomEvent('eventFromIframePage', { detail: { foo: 'bar' } }));">Send custom event to window.parent (render process)</a></li>
+                <li><a href="javascript:window.top.document.dispatchEvent(new CustomEvent('eventFromIframePage', { detail: { foo: 'bar' } }));">Send custom event to window.top (render process)</a></li>
+                <li>Send custom event to electron main process via render process window.parent (TODO)</a></li>
+            </ul>
+        </div>
 
     </div>
+
+    <br>
+    <p>Navigate to another flask rendered page.</p>
+    <a href="/hello">/hello</a>
 
     <script type="module">
         import { blah, xx, HelloVueApp } from '/static/js/hello-vue.js'
@@ -67,6 +96,11 @@
             // let's do something interesting on the flask page, like change the displayed message, via vue
             rootComponent.messageFromMainProcess = JSON.stringify(arg)  // OK
         }
+    </script>
+
+    <script>
+        // fomantic bootstrap
+        $('.ui.accordion:first').accordion('close', 0)  // actually don't need to close since no 'active' attr
     </script>
 
 </body>
