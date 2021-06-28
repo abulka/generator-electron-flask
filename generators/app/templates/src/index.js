@@ -151,13 +151,13 @@ function setupMenus() {
         { label: "Send Event to Render Process", 
           accelerator: 'CmdOrCtrl+E',
           click: () => { 
-            getMainWindow().webContents.send('eventFromMainProcess', {detail: { foo: 'bar2' }}) 
+            getMainWindow().webContents.send('eventFromMainProcess', {detail: { foo: 'bar2', time: (new Date()).getTime() }}) 
           }
         },
         { label: "Send Event to Flask Page",
         accelerator: 'CmdOrCtrl+Shift+E',
         click: () => { 
-          getMainWindow().webContents.send('eventFromMainProcessToPassOnToIframe', {detail: { foo: 'bar3' }}) 
+          getMainWindow().webContents.send('eventFromMainProcessToPassOnToIframe', {detail: { foo: 'bar3', time: (new Date()).getTime() }}) 
         }
        }
       ]

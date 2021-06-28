@@ -6,6 +6,7 @@ from flask_cors import CORS, cross_origin
 from flask import request
 from flask import render_template
 import pprint
+from datetime import datetime
 
 # This wil report the electron exe location, and not the /tmp dir where the exe
 # is actually expanded and run from!
@@ -42,7 +43,7 @@ class HelloWorld(Resource):
         print(f"calling GET in python api - cool", flush=True)
         # print("some stderr", file=sys.stderr)
         # print("some stdout", file=sys.stdout, flush=True)
-        data = {'hello': 'world'}
+        data = {'hello': 'world', 'time': datetime.now().strftime("%H:%M:%S")}
         return data
 
 @app.route('/hello')

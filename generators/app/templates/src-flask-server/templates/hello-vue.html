@@ -17,9 +17,6 @@
         .info {
           padding-left: 1em;
         }
-        .slim-bottom {
-          margin-bottom: 0;
-        }
     </style>
 
 </head>
@@ -40,27 +37,26 @@
                 <button class="ui button green" v-on:click="getInfo">
                     GET
                 </button>
-                JSON response from Flask Server: ${ message }
+                JSON response from Flask Server: <code>${ message }</code>
             </div>
         </div>
 
         <div class="title"> <i class="dropdown icon"></i> Receive from Main Process </div>
         <div class="content">
             <p>This is a test of communication from the electron main process to this flask page.
-            It is accomplished in two steps: An event first travels to the render process, 
-            whereupon another event is sent to the iframe.</p>
-            <p><code>main process → render process</code></p> 
-            <p><code style="padding-left: 11em;">↓</code></p> 
-            <p><code style="padding-left: 10em;">iframe</code></p> 
-            <p><code style="padding-left: 9em;">(flask page HTML)</code></p> 
-            <p>Select 'Flask Stuff / Send Event to Flask Page' from the native app menu
+            It is accomplished in two steps, using two events:</p>
+            <img src="{{ url_for('static', filename='images/events-main-process-to-flask.svg')}}" style="padding-left: 1em; padding-bottom: 1.0em;">
+            <p>First send an event from the main process to the render process, then transfer the event payload to a second event, 
+                which you send from the render process to the iframe containing the flask HTML.</p>
+            <p><b>Demo:</b> Select 'Flask Stuff / Send Event to Flask Page' from the native app menu
              Shortcut: <i>CmdOrCtrl+Shift+E</i>.
-             The event payload object is carried on both events, and
+             The same event payload object is carried on both events, and
              is visible in the result, below.
             </p>
             <p>Result: <code>${ messageFromMainProcess }</code>
             </p>
         </div>
+
 
         <div class="title"> <i class="dropdown icon"></i> Talk to Render Process</div>
         <div class="content">
