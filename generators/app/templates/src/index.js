@@ -3,6 +3,7 @@ const {ipcMain} = require('electron')
 const path = require('path');
 const { setMainWindow, getMainWindow, closeMainWindow } = require('./boot-flask.js');
 const { runFlask, checkFlask, killFlask } = require('./boot-flask.js');
+const Menu = require("electron-create-menu");  // 3rd party easier menu building
 
 <% if (reportVersions) { %>
 const os = require('os');
@@ -91,6 +92,8 @@ const createWindow = () => {
     // let boot flask logic know about mainWindow to assist with proper quit
     setMainWindow(_mainWindow) 
   }
+  
+  setupMenus()
 
 };
 
@@ -137,6 +140,32 @@ ipcMain.on('synchronous-message', (event, arg) => {
   // Synchronous event emmision
   event.returnValue = 'sync pong'
 })
+
+// Menus
+
+function setupMenus() {
+  Menu((defaultMenu, separator) => {
+    defaultMenu.push({
+      label: "Flask Stuff",
+      submenu: [
+        { label: "Send Event to Render Process", 
+          accelerator: 'CmdOrCtrl+E',
+          click: () => { 
+            getMainWindow().webContents.send('eventFromMainProcess', {detail: { foo: 'bar2' }}) 
+          }
+        },
+        { label: "Send Event to Flask Page",
+        accelerator: 'CmdOrCtrl+Shift+E',
+        click: () => { 
+          getMainWindow().webContents.send('eventFromMainProcessToPassOnToIframe', {detail: { foo: 'bar3' }}) 
+        }
+       }
+      ]
+    });
+  
+    return defaultMenu;
+  });
+}
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.

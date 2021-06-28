@@ -17,23 +17,27 @@
 
     <p>hi there {{msg}}</p>
 
-    <div style="width:100%; padding-left: 30%; padding-right: 30%;">
-        <img src="{{ url_for('static', filename='images/hello.png')}}" style="padding: 1em;">
-    </div>
-
     <div id="hello-vue" class="demo">
+
+        <div class="ui raised padded text container segment">
+            <p>Test of communication <i>from</i> main process <i>to</i> this flask page.</p> 
+            <p>Select main electron menu
+            'Flask Stuff / <b>Send Event to Flask Page</b>' or just <i>CmdOrCtrl+Shift+E</i>
+            </p>
+            <p>result: <code>${ messageFromMainProcess }</code>
+            </p>
+        </div>
 
         <div class="ui raised padded text container segment">
             <div class="inline field">
                 <button class="ui button green" v-on:click="getInfo">
                     GET
                 </button>
-                JSON response: ${ message }
-
+                JSON response from Flask Server: ${ message }
             </div>
         </div>
 
-        <p>Communication <i>from</i> iframe FLASK pages <i>to</i> parent electron render process HTML.</p>
+        <p>Test of communication <i>from</i> iframe FLASK pages <i>to</i> parent electron render process HTML.</p>
         <ul>
             <li><a href="javascript:window.parent.document.dispatchEvent(new CustomEvent('eventFromIframePage', { detail: { foo: 'bar' } }));">Send custom event to window.parent (render process)</a></li>
             <li><a href="javascript:window.top.document.dispatchEvent(new CustomEvent('eventFromIframePage', { detail: { foo: 'bar' } }));">Send custom event to window.top (render process)</a></li>
@@ -48,7 +52,21 @@
     <script type="module">
         import { blah, xx, HelloVueApp } from '/static/js/hello-vue.js'
         console.log('blah', blah(), 'xx', xx)
-        Vue.createApp(HelloVueApp).mount('#hello-vue')
+        let app = Vue.createApp(HelloVueApp).mount('#hello-vue')
+        let rootComponent = app  // same thing
+
+        // Example of listening for events from render process html
+        window.document.addEventListener('eventFromRenderProcess', handleEvent, false)
+        function handleEvent(e) {
+            let arg = e.detail
+            console.log(arg)
+
+            // stop the event bubbling up to the iframe script, if you don't want it to.
+            e.stopImmediatePropagation();  // e.stopPropagation() doesn't work
+
+            // let's do something interesting on the flask page, like change the displayed message, via vue
+            rootComponent.messageFromMainProcess = JSON.stringify(arg)  // OK
+        }
     </script>
 
 </body>

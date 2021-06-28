@@ -163,27 +163,36 @@
               <p>Communication from iframe pages to electron render process html</p>
               <li><a href="javascript:window.parent.document.dispatchEvent(new CustomEvent('eventFromIframePage', { detail: { foo: 'bar' } }));">Send event to window.parent</a></li>
               <li><a href="javascript:window.top.document.dispatchEvent(new CustomEvent('eventFromIframePage', { detail: { foo: 'bar' } }));">Send event to window.top</a></li>
+              <li>Send custom event to electron main process via render process window.parent (TODO)</a></li>
             </ul>
             `
       let iframe = document.querySelector('iframe.flask-pages')
       iframe.srcdoc = output_html
 
-      // Initialise iframe, append some script - but interesting, this stays around even when navigate away!
+      // Initialise iframe, append some demo script which intercepts
+      // 'eventFromRenderProcess' events.  Interestingly, this script stays
+      // around even when flask pages navigate away! because this script is attached to
+      // the iframe - which hangs around between flask page navigations. You could
+      // utilise this feature in a positive way and put 'global' event handlers
+      // here that are common for all flask pages, or just remove all this
+      // script if you don't need it.
       iframe.onload = function () {
         const src = `
-                // Example of listening for events from render process html - any flask page should also add this kind of code
+                // Example of listening for events from render process html - any flask page should also add this kind of code to reive events
                 window.document.addEventListener('eventFromRenderProcess', handleEvent, false)
                 function handleEvent(e) {
-                  console.log(e.detail)
-                  alert('iframe BOOT page received event from electron render process.')
+                  let arg = e.detail
+                  console.log(arg)
+                  alert('iframe.contentWindow.document.body script received event from electron render process, args:' + JSON.stringify(arg))
                 }
 
-                console.log('iframe BOOT page loaded ok')
+                console.log('iframe onload done')
             `
         const script = iframe.contentWindow.document.createElement("script");
         script.type = "text/javascript";
         script.innerHTML = src  // script.src = src; doesn't work
-        iframe.contentWindow.document.body.appendChild(script);
+        iframe.contentWindow.document.body.appendChild(script);  // only append this script if it is useful to you, see comment above
+
 
       }
     }
@@ -191,7 +200,7 @@
     bootIframe('http://localhost:5000/<%= initialUrlFlask %>')  // init with a flask page
 
 
-    // In electron render process html, listen for possible custom events from iframe pages
+    // In this electron render process html, listen for possible custom events from iframe pages
     // You could in turn talk to the electron main process from here, thus offering a way for
     // flask pages to talk to both the render process and the main process.
     window.document.addEventListener('eventFromIframePage', handleEvent, false)
@@ -199,6 +208,17 @@
       console.log(e.detail)
       alert('electron render process html received event from iframe page.')
     }
+
+    // In this electron render process html, listen for possible events from main process
+    window.ipcRenderer.on('eventFromMainProcess', function(event, arg) {
+      alert(`got eventFromMainProcess, args: ${JSON.stringify(arg)}`)
+    });
+    window.ipcRenderer.on('eventFromMainProcessToPassOnToIframe', function(event, arg) {
+      // stage 1 receive from main process
+      // stage 2 send down to iframe for flask page to possibly pick up
+      let event2 = new CustomEvent('eventFromRenderProcess', arg)
+      document.querySelector('iframe.flask-pages').contentDocument.dispatchEvent(event2)
+    });
 
     // fomantic bootstrap
     $('.ui.accordion:first').accordion('close', 0)  // actually don't need to close since no 'active' attr
