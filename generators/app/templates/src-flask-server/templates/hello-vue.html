@@ -47,7 +47,7 @@
             <ul>
                 <li><a href="javascript:window.parent.document.dispatchEvent(new CustomEvent('eventFromIframePage', { detail: { foo: 'bar' } }));">Send event to electron render process</a></li>
             </ul>
-            <p>Look for the message in the electron app Developer Tools javascript console.</p>
+            <p><b>Tip:</b> Look for the message in the electron app's Developer Tools console.</p>
         </div>
 
         <div class="title"> <i class="dropdown icon"></i> Talk to Main Process</div>
@@ -56,7 +56,7 @@
             <ul>
                 <li><a href="javascript:window.top.document.dispatchEvent(new CustomEvent('eventFromIframePageToMain', { detail: { foo: 'bar4' } }));">Send event to electron main process</a></li>
             </ul>
-            <p>Look in the terminal console for proof that the main process got the event and its payload.</p>
+            <p><b>Tip:</b> Look in the terminal console for proof that the main process got the event and its payload.</p>
         </div>
                 
         <div class="title"> <i class="dropdown icon"></i> Receive from Main Process </div>
