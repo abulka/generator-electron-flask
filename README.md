@@ -27,6 +27,36 @@ Then generate your new project:
 yo electron-flask
 ```
 
+Answering the questions e.g.
+
+
+         _-----_     ╭──────────────────────────╮
+        |       |    │  Welcome to the amazing  │
+        |--(o)--|    │ generator-electron-flask │
+       `---------´   │        generator!        │
+        ( _´U`_ )    ╰──────────────────────────╯
+        /___A___\   /
+         |  ~  |     
+       __'.___.'__   
+     ´   `  |° ´ Y ` 
+
+    ? App Name myapp
+    ? Description My Electron application description
+    ? Author's Name Fred Smith
+    ? Author's Email fred@example.com
+    ? license: Apache 2.0
+    ? Package keywords (comma to split) python, js, great-app
+    ? Run flask on port number? 5000
+    ? Initial flask url (e.g. /hello or /hello-vue) to display? / hello
+    ? Choose from misc options (Press <space> to select, <a> to toggle all, <i> to invert selection)
+    ❯◉ Electron logging
+    ◯ Print current working directory on startup
+    ◯ Print node and electron versions on starrtup
+    ◉ Fully quit on Mac on exit (without needing CMD-Q)
+    ◉ Open Electron/Chrome DevTools in final app
+
+Remember to `cd myapp` to enter into your new project directory, where you can edit it and run it.
+
 ## Resulting App
 
 Activate the python virtual environment created by this generator `. venv/bin/activate` then run `npm start`.
@@ -55,11 +85,16 @@ You can run the flask app independently by running `bin/runflask`.  Then browse 
 
 You can test your electron app by running `bin/runelectron` which will run the electron app and automaticaly run flask in development mode, then kill flask upon exiting.
 
-> Calling `runelectron` aka. `npm start` whilst your python virtual environment is activated is the main workflow for development. 
+Once the electron-flask project is generated for you, the main workflow during development is editing code then calling `runelectron` aka. `npm start` whilst your python virtual environment is activated. In this way, the flask server spawned by electron should hopefully be invoked with the correct version of Python.
 
-If you are not using a virtual environment then ensure you have installed all the dependencies in `requirements.txt` into your default Python environment.
+If you are not using a virtual environment then ensure you have installed all the dependencies in `requirements.txt` into your default Python environment with `pip install -r requirements.txt`.
 
-For deployment, simply run the script `bin/build` and the resulting app will appear in e.g. `out/YOURAPP-darwin-x64/`.  Double click on it to run it.
+For deployment, simply run the script `bin/build` and the resulting app will appear in e.g. `out/YOURAPP-YOUROS-x64/` where `YOUROS` is one of 
+- darwin-x64
+- linux-x64
+- win32-x64
+
+Double click on the executable to run it.  For example, for MacOS assuming the app name is `myapp`, you would double click on `out/myapp-darwin-x64/myapp.app`
 
 # Architecture
 
@@ -92,6 +127,8 @@ There are probably better explanations of how Electron works, but here is my und
 
 - We start with the nodejs electron `main process` which is pure javascript `src/index.js` and is the entry point. It is a nodejs process with access to the file system and where you define native OS menus etc. It is responsible for launching the browser window containing the UI.  The browser window runs in a separate render process. The main process loads in the initial HTML into the browser window.
 - The electron `render process` is the browser window containing e.g. `src/index.html` and its associated javascript. 
+
+Now we introduce a 3rd process, the flask server.
 
 Anyone can talk to the flask server - it's just an endpoint:
 - the javascript of the main electron process `src/index.js`
