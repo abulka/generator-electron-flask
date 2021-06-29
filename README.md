@@ -125,16 +125,19 @@ The other main architectural idea here is that flask rendered pages are loaded i
 
 There are probably better explanations of how Electron works, but here is my understanding, which will help you understand this documentation.
 
-- We start with the nodejs electron `main process` which is pure javascript `src/index.js` and is the entry point. It is a nodejs process with access to the file system and where you define native OS menus etc. It is responsible for launching the browser window containing the UI.  The browser window runs in a separate render process. The main process loads in the initial HTML into the browser window.
+- We start with the nodejs electron `main process` which is pure javascript `src/index.js` and is the entry point. It is a nodejs process with access to the file system and where you define native OS menus etc. It is responsible for launching the browser window containing the UI.  The browser window runs in a separate render process. The main process loads the initial HTML into the browser window.
 - The electron `render process` is the browser window containing e.g. `src/index.html` and its associated javascript. 
 
-Now we introduce a 3rd process, the flask server.
+Now, with the `electron-flask` project (this project) we introduce a 3rd process:
+- The `flask server` process, which is written in Python. The flask server also has access to the filesystem, networking and all operating system features. Flask is spawned asynchronously by the electron main process using the command `require('child_process').spawn(pythonExePath)` and is killed by the main process when electron app exits.
 
 Anyone can talk to the flask server - it's just an endpoint:
 - the javascript of the main electron process `src/index.js`
 - the javascript of the electron render process in `src/index.html` 
 - any flask generated html page
- 
+
+For documentation on how to achieve communication between all the above, see the [events documentation](doco/events.md).
+
 ## File structure generated
 
 Root files
