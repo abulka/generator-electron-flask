@@ -84,13 +84,20 @@ The flask server is spawned as a child process by the Electron app main process 
     │ └────────────────────────────────────────┘  │    │                                 │            
     └─────────────────────────────────────────────┘    └─────────────────────────────────┘            
 
+The other main architectural idea here is that flask rendered pages are loaded in an iframe of the render process browser window. If they are loaded in the main render process browser window, you lose electron interprocess communication. For more information see [page navigation documentation](doco/page-navigation.md).
+
+## Electron Terminology
+
+There are probably better explanations of how Electron works, but here is my understanding, which will help you understand this documentation.
+
+- We start with the nodejs electron `main process` which is pure javascript `src/index.js` and is the entry point. It is a nodejs process with access to the file system and where you define native OS menus etc. It is responsible for launching the browser window containing the UI.  The browser window runs in a separate render process. The main process loads in the initial HTML into the browser window.
+- The electron `render process` is the browser window containing e.g. `src/index.html` and its associated javascript. 
+
 Anyone can talk to the flask server - it's just an endpoint:
 - the javascript of the main electron process `src/index.js`
 - the javascript of the electron render process in `src/index.html` 
 - any flask generated html page
-
-The other main architectural idea is that flask rendered pages are loaded in an iframe of the render process browser window. If they are loaded in the main render process browser window, you lose electron interprocess communication. For more information see [page navigation documentation](doco/page-navigation.md).
-
+ 
 ## File structure generated
 
 Root files
