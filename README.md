@@ -27,6 +27,12 @@ Then generate your new project:
 yo electron-flask
 ```
 
+## Resulting App
+
+Here is the resulting electron app, with a flask server running inside:
+
+![demo](/doco/electron-flask-demo1.gif)
+
 ## To update this generator
 
     npm update generator-electron-flask -g
