@@ -37,7 +37,7 @@
   <div class="ui accordion" id="electron-index-vue">
     <div class="title"> <i class="dropdown icon"></i> Diagnostics </div>
     <div class="content">
-      <p class="info">Here are some diagnostics from the point of view of the electron render process.</p>
+      <p class="info">Here are some diagnostics from the point of view of the electron <b>render process</b> <code>src/index.html</code>.  This is not flask rendered HTML.</p>
       <div class="ui styled accordion">
 
         <div class="title"> <i class="dropdown icon"></i> Talking to the flask server </div>
@@ -204,23 +204,40 @@
 
       }
     }
-    // bootIframe()  // init with a custom hand coded page
+    // bootIframe()  // init with diagnostic page
     bootIframe('http://localhost:5000/<%= initialUrlFlask %>')  // init with a flask page
 
 
-    // In this electron render process html, listen for possible custom events from iframe pages
-    // You could in turn talk to the electron main process from here, thus offering a way for
-    // flask pages to talk to both the render process and the main process.
+    /* In this electron render process html, listen for possible custom events from iframe pages
+       You could in turn talk to the electron main process from here, thus offering a way for
+       flask pages to talk to both the render process and the main process.
+    */
+
+    // flask page in render process iframe -> render process
     window.document.addEventListener('eventFromIframePage', handleEvent, false)
     function handleEvent(e) {
       console.log(e.detail)
       alert('electron render process html received event from iframe page.')
     }
 
-    // In this electron render process html, listen for possible events from main process
+    // flask page in render process iframe -> render process -> main process
+    window.document.addEventListener('eventFromIframePageToMain', handleEventAndPassItOn, false)
+    function handleEventAndPassItOn(e) {
+      // stage 1 receive event from flask page in iframe
+      // stage 2 send second event to main process, passing on the payload
+      // tip: look in the terminal console for proof that the main process got the event and its payload
+      console.log(window.ipcRenderer.sendSync('synchronous-message', e.detail)) 
+  }
+
+    /* In this electron render process html, listen for possible custom events from main process
+    */
+
+    // main -> render
     window.ipcRenderer.on('eventFromMainProcess', function(event, arg) {
       alert(`got eventFromMainProcess, args: ${JSON.stringify(arg)}`)
     });
+
+    // main -> render -> render process iframe containing flask page
     window.ipcRenderer.on('eventFromMainProcessToPassOnToIframe', function(event, arg) {
       // stage 1 receive from main process
       // stage 2 send down to iframe for flask page to possibly pick up
@@ -230,7 +247,7 @@
 
     // fomantic bootstrap
     $('.ui.accordion:first').accordion('close', 0)  // actually don't need to close since no 'active' attr
-     
+
   </script>
 
 </body>

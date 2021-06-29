@@ -251,10 +251,12 @@ def hello():
 
 # Events
 
-You can communicate between
-- a flask page
+You can communicate between any of these
+- a flask page (flask page in render process's iframe)
 - the electron render process html page 
 - the electron main process
+
+A flask page actually lives inside an iframe of the render process.
 
 ## Flask -> Render -> Main
 
@@ -262,7 +264,7 @@ The way to communicate between electron processes is documented by the [Electron
 
 The only trick that electron-flask needs to achieve is to communicate from the flask page living in the iframe to the parent render process page.
 
-We can simply send a custom event from the flask html like this:
+Simply send a custom event from the iframe's flask rendered HTML to the outer render process HTML `window.parent.document` (or to `window.top.document`) like this:
 
 ```html
 <li><a href="javascript:window.parent.document.dispatchEvent(new CustomEvent('eventFromIframePage', { detail: { foo: 'bar' } }));">Send custom event to window.parent (render process)</a></li>
@@ -283,7 +285,24 @@ function handleEvent(e) {
 
 > The demo page `/hello-vue`, in the generated project, demonstrates this communication.
 
-Once you can reach the render process, you can then contact the main process using the official Electron inter-process techniques.
+### Optional Render -> Main
+
+Once the event reaches the render process, you can then contact the main electron process (`src/index.js` using the official Electron inter-process techniques, viz. sending a second event and possibly passing the payload of the first event onto the second event.
+
+```javascript
+// flask page in render process iframe -> render process -> main process
+window.document.addEventListener('eventFromIframePageToMain', handleEventAndPassItOn, false)
+function handleEventAndPassItOn(e) {
+    console.log(window.ipcRenderer.sendSync('synchronous-message', e.detail)) 
+}
+```
+
+- stage 1 receive event from flask page in iframe
+- stage 2 send second event to main process, passing on the payload
+
+> Tip: Look in the terminal console for proof that the main process got the event and its payload
+
+Of course you can do electron inter-process communication using [asynchronous events](https://www.tutorialspoint.com/electron/electron_inter_process_communication.htm), too.
 
 ## Main -> Flask
 
